@@ -81,25 +81,21 @@ export const generateBridalImage = async (params: GenerationParams, onUpdate?: (
     });
   }
 
-  // Nano Banana Pro — use view-specific prompt
-  const imageUrls = viewMode === "location-closeup"
-    ? []
-    : [garmentImageUrl, modelImageUrl];
-  if (viewMode === "location" && locationImageUrl) {
+  // Nano Banana Pro Edit — use view-specific prompt with input images
+  const imageUrls = [garmentImageUrl, modelImageUrl];
+  if ((viewMode === "location" || viewMode === "location-closeup") && locationImageUrl) {
     imageUrls.push(locationImageUrl);
   }
 
-  const input: any = {
-    prompt: getPromptForView(viewMode),
-    image_urls: imageUrls,
-    num_images: numSamples,
-    resolution: "2K",
-    aspect_ratio: "auto",
-    output_format: "png",
-    seed: seed
-  };
   return await fal.subscribe("fal-ai/nano-banana-pro/edit", {
-    input,
+    input: {
+      prompt: getPromptForView(viewMode),
+      image_urls: imageUrls,
+      num_images: numSamples,
+      resolution: "2K",
+      aspect_ratio: "auto",
+      output_format: "png",
+    } as any,
     logs: true,
     onQueueUpdate: onUpdate
   });

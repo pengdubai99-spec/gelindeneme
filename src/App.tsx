@@ -6,6 +6,7 @@ import { ImageUploader } from "./components/ImageUploader";
 import { ViewModeNav } from "./components/ViewModeNav";
 import { ViewPage } from "./pages/ViewPage";
 import { ResultGallery } from "./components/ResultGallery";
+import { fal } from "@fal-ai/client";
 import { generateBridalImage, AIModelId, ViewMode } from "./services/falApi";
 import logoUrl from "./logo.jpg";
 
@@ -74,7 +75,7 @@ const App: React.FC = () => {
   useEffect(() => {
     if (falKey) {
       localStorage.setItem("FAL_KEY", falKey);
-      (window as any).process = { env: { FAL_KEY: falKey } };
+      fal.config({ credentials: falKey });
     }
   }, [falKey]);
 
@@ -103,7 +104,7 @@ const App: React.FC = () => {
       return;
     }
 
-    if (viewMode === "location" && !locationUrl) {
+    if ((viewMode === "location" || viewMode === "location-closeup") && !locationUrl) {
       alert("Lütfen mekan fotoğrafını yükleyin.");
       return;
     }
@@ -127,7 +128,7 @@ const App: React.FC = () => {
         seed: currentSeed,
         quality: quality,
         viewMode: viewMode,
-        locationImageUrl: viewMode === "location" ? locationUrl : undefined,
+        locationImageUrl: (viewMode === "location" || viewMode === "location-closeup") ? locationUrl : undefined,
       }, (update) => {
         if (update.status === "IN_PROGRESS") {
           const lastLog = update.logs?.[update.logs.length - 1]?.message || "Sanal Couture İşleniyor...";
@@ -384,7 +385,7 @@ const App: React.FC = () => {
                 onSelectEngine={setEngine}
                 isLoading={isLoading}
                 onGenerate={handleGenerate}
-                canGenerate={true}
+                canGenerate={!!dressUrl && !!modelUrl && !!locationUrl}
                 progressMsg={progressMsg}
               />
             }
