@@ -19,6 +19,51 @@ interface GenerationResult {
   viewMode: string;
 }
 
+const MainHeader: React.FC<{ falKey: string }> = ({ falKey }) => (
+  <header className="h-16 border-b border-white/10 flex items-center justify-between px-6 bg-black/40 backdrop-blur-md z-50">
+    <div className="flex items-center space-x-3">
+      <div className="flex flex-col">
+        <h1 className="font-serif text-2xl tracking-widest text-[#D4AF37] uppercase leading-none">Fashion Master</h1>
+        <span className="text-[10px] tracking-[0.3em] text-gray-400 font-light mt-1 uppercase">Haute Couture Studio</span>
+      </div>
+    </div>
+    <div className="flex items-center space-x-6 text-sm">
+      <div className="flex items-center space-x-2 text-green-500">
+        <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+        <span className="text-xs font-medium">Sistem Çevrimiçi</span>
+      </div>
+      <div className="flex items-center space-x-4">
+        <button className="text-gray-400 hover:text-[#D4AF37] transition-colors">
+          <Settings2 size={20} strokeWidth={1.5} />
+        </button>
+        <div className="w-8 h-8 rounded-full bg-[#D4AF37]/20 border border-[#D4AF37]/40 flex items-center justify-center text-[#D4AF37] text-xs font-bold">JD</div>
+      </div>
+    </div>
+  </header>
+);
+
+const BottomStatus: React.FC<{ shootMode: string; engine: string; setShowSettings: (show: boolean) => void }> = ({ shootMode, engine, setShowSettings }) => (
+  <footer className="h-8 bg-black border-t border-white/5 flex items-center px-4 justify-between z-50">
+    <div className="flex items-center space-x-4">
+      <button 
+        onClick={() => setShowSettings(true)}
+        className="text-[10px] text-gray-500 hover:text-white flex items-center transition-colors"
+      >
+        <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+        Sistem Erişimi
+      </button>
+      <span className="text-[10px] text-gray-700">|</span>
+      <span className="text-[10px] text-gray-500">Çekim Modu: {shootMode.toUpperCase()}</span>
+      <span className="text-[10px] text-gray-700">|</span>
+      <span className="text-[10px] text-gray-500">Düğüm: {engine.split('/').pop()?.toUpperCase()}</span>
+    </div>
+    <div className="flex items-center space-x-6 text-[10px] text-gray-500">
+      <span>Latans: 42ms</span>
+      <span>Oturum ID: FM_{new Date().getTime().toString().slice(-5)}</span>
+    </div>
+  </footer>
+);
+
 const FloatingParticles: React.FC = () => {
   const particles = Array.from({ length: 20 }, (_, i) => ({
     id: i,
@@ -172,276 +217,189 @@ const App: React.FC = () => {
   const isLocationMode = shootMode === "location";
 
   return (
-    <div className="app-container">
-      {/* ─── Sidebar Control Panel ─── */}
-      <aside className="sidebar">
-        <div className="sidebar-header flex flex-col items-center justify-center pt-6 pb-1">
-          <motion.div
-            whileHover={{ scale: 1.02 }}
-            style={{ width: '100%', height: '50px', position: 'relative', overflow: 'hidden' }}
-          >
-            <img
-              src={logoUrl}
-              alt="FashionMaster"
-              className="opacity-90 transition-opacity hover:opacity-100"
-              style={{
-                position: 'absolute',
-                top: '55%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                width: '200px',
-                maxWidth: 'none',
-                mixBlendMode: 'screen'
-              }}
-            />
-          </motion.div>
-          <div className="text-center">
-            <p className="text-[8px] text-white/25 font-bold uppercase tracking-[0.3em]">Haute Couture Stüdyo</p>
-          </div>
-        </div>
-
-        <div className="sidebar-content scroll-area space-y-2">
-          {/* Card 1: Çekim Modu Toggle */}
-          <motion.section
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.05 }}
-            className="sidebar-card"
-          >
-            <div className="section-header">
-              <div className="section-header-icon bg-[#c5a059]/10">
-                <Layers size={12} className="text-[#c5a059]" />
-              </div>
-              <h2 className="section-header-title">Çekim Modu</h2>
-            </div>
+    <div className="app-container flex flex-col h-screen overflow-hidden bg-[#121212] selection:bg-[#D4AF37]/30">
+      <MainHeader falKey={falKey} />
+      
+      <main className="flex flex-row flex-1 overflow-hidden relative">
+        {/* BEGIN: LeftSidebar */}
+        <aside className="sidebar glass-panel overflow-y-auto p-4 flex flex-col space-y-6">
+          {/* Section: Çekim Modu */}
+          <section>
+            <h3 className="text-[10px] uppercase tracking-widest text-[#D4AF37] mb-3 font-semibold">Çekim Modu</h3>
             <ShootModeToggle shootMode={shootMode} onShootModeChange={setShootMode} />
-          </motion.section>
+          </section>
 
-          {/* Card 2: Görünüm Seçimi (Sub-Tabs) */}
-          <motion.section
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.1 }}
-            className="sidebar-card"
-          >
-            <div className="section-header">
-              <div className="section-header-icon bg-blue-500/10">
-                <Grid3X3 size={12} className="text-blue-400" />
-              </div>
-              <h2 className="section-header-title">Görünüm Seçimi</h2>
-            </div>
+          {/* Section: Görünüm Seçimi */}
+          <section>
+            <h3 className="text-[10px] uppercase tracking-widest text-[#D4AF37] mb-3 font-semibold">Görünüm Seçimi</h3>
             <ViewSubTabs shootMode={shootMode} />
-          </motion.section>
+          </section>
 
-          {/* Card 3: AI İşlem Düğümleri (Düğüm Seçimi) */}
-          <motion.section
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.15 }}
-            className="sidebar-card"
-          >
-            <div className="section-header">
-              <div className="section-header-icon bg-amber-500/10">
-                <Settings2 size={12} className="text-amber-400" />
-              </div>
-              <h2 className="section-header-title">İşlem Düğümü</h2>
+          {/* Section: İşlem Düğümü */}
+          <section>
+            <h3 className="text-[10px] uppercase tracking-widest text-[#D4AF37] mb-3 font-semibold">İşlem Düğümü</h3>
+            <div className="glass-panel p-2 rounded-sm border-white/5 bg-black/20">
+              <select 
+                value={engine}
+                onChange={(e) => setEngine(e.target.value as AIModelId)}
+                className="w-full bg-transparent text-[11px] font-medium text-gray-300 outline-none cursor-pointer"
+              >
+                <option value="fal-ai/nano-banana-pro/edit" className="bg-[#121212]">ANA PROTOKOL v.01 (FAL)</option>
+                <option value="fal-ai/fashn/tryon/v1.5" className="bg-[#121212]">FASHN ÇEKİRDEK 1.5</option>
+                <option value="fal-ai/idm-vton" className="bg-[#121212]">IDM HİBRİT</option>
+              </select>
             </div>
-            <div className="space-y-3">
-               <div className="p-2.5 rounded-lg bg-white/[0.02] border border-white/[0.04]">
-                  <select 
-                    value={engine}
-                    onChange={(e) => setEngine(e.target.value as AIModelId)}
-                    className="w-full bg-transparent text-[11px] font-medium text-white/80 outline-none cursor-pointer"
-                  >
-                    <option value="fal-ai/nano-banana-pro/edit" className="bg-[#121212]">ANA PROTOKOL v.01 (FAL)</option>
-                    <option value="fal-ai/fashn/tryon/v1.5" className="bg-[#121212]">FASHN ÇEKİRDEK 1.5</option>
-                    <option value="fal-ai/idm-vton" className="bg-[#121212]">IDM HİBRİT</option>
-                  </select>
-               </div>
-               <p className="text-[8px] text-white/20 px-1 italic">Not: Görünüm moduna göre otomatik optimize edilir.</p>
-            </div>
-          </motion.section>
+            <p className="text-[9px] text-gray-500 mt-2 italic leading-relaxed">
+              * Görünüm moduna göre otomatik optimize edilir.
+            </p>
+          </section>
 
-          {/* Card 4: Parametreler (altta) */}
-          <motion.section
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.2 }}
-            className="sidebar-card"
-          >
-            <div className="section-header">
-              <div className="section-header-icon bg-cyan-500/10">
-                <SlidersHorizontal size={12} className="text-cyan-400" />
-              </div>
-              <h2 className="section-header-title">Parametreler</h2>
-            </div>
-            <div className="space-y-3">
-              {/* Quality Badge */}
-              <div className="space-y-1.5">
-                <label className="text-[9px] font-semibold text-white/35 block pl-0.5 uppercase tracking-[0.12em]">Çıktı Kalitesi</label>
-                <div className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg bg-gradient-to-r from-white/[0.03] to-white/[0.01] border border-white/[0.06] relative overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-r from-[#c5a059]/[0.03] to-transparent pointer-events-none" />
-                  <div className="relative flex items-center gap-1.5">
-                    <Sparkles size={10} className="text-[#c5a059]/60" />
-                    <span className="text-[10px] font-semibold text-white/90 tracking-wider">4K Ultra</span>
-                  </div>
-                  <span className="text-[8px] text-[#c5a059]/50 ml-auto font-bold uppercase tracking-widest relative">Sabit</span>
+          {/* Section: Parametreler */}
+          <section className="flex-1">
+            <h3 className="text-[10px] uppercase tracking-widest text-[#D4AF37] mb-3 font-semibold">Parametreler</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="text-[10px] text-gray-400 block mb-1">Çıktı Kalitesi</label>
+                <div className="flex items-center justify-between glass-panel p-2 rounded-sm text-[11px] bg-black/20 border-white/5">
+                  <span className="text-[#D4AF37]">✨ 4K Ultra</span>
+                  <span className="text-gray-500">Sabit</span>
                 </div>
               </div>
 
-              {/* Seed Input */}
-              <div className="space-y-1.5">
-                <label className="text-[9px] font-semibold text-white/35 block pl-0.5 uppercase tracking-[0.12em]">Sabit Tohum (Seed)</label>
-                <div className="relative">
-                  <input
+              <div>
+                <label className="text-[10px] text-gray-400 block mb-1">Sabit Tohum (Seed)</label>
+                <div className="flex space-x-2">
+                  <input 
                     type="number"
                     placeholder="Rastgele Seçim"
                     value={seed || ""}
                     onChange={(e) => setSeed(e.target.value ? parseInt(e.target.value) : undefined)}
-                    className="input-modern pr-10 !py-2.5 !text-[12px]"
+                    className="flex-1 bg-black/40 border border-white/10 rounded-sm text-[11px] p-2 focus:ring-1 focus:ring-[#D4AF37] outline-none text-white"
                   />
-                  <Zap size={12} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#c5a059]/30" />
+                  <button className="glass-panel px-2 rounded-sm text-[#D4AF37] hover:bg-[#D4AF37]/10 transition-colors">
+                    <Zap size={14} />
+                  </button>
                 </div>
               </div>
             </div>
-          </motion.section>
-        </div>
+          </section>
 
-        {/* System Access Button */}
-        <div className="px-3 py-2.5 relative z-[1]" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
-          <motion.button
-            whileHover={{ scale: 1.01 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={() => setShowSettings(true)}
-            className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg bg-gradient-to-r from-white/[0.03] to-white/[0.01] border border-white/[0.06] text-[9px] font-semibold text-white/50 hover:text-white/80 hover:border-white/[0.1] hover:from-white/[0.05] hover:to-white/[0.02] transition-all duration-300 uppercase tracking-[0.15em] relative overflow-hidden group"
-          >
-            <div className="absolute inset-0 bg-gradient-to-r from-[#c5a059]/0 via-[#c5a059]/[0.03] to-[#c5a059]/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
-            <Shield size={11} className="relative" /> <span className="relative">Sistem Erişimi</span>
-          </motion.button>
-        </div>
-      </aside>
-
-      {/* ─── Main Production Stage ─── */}
-      <main className="main-stage">
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <ViewPage
-                title="Ön Görünüm"
-                subtitle="Editoryal Ön Çekim Modu"
-                accentColor="#c5a059"
-                viewMode="front"
-                onDressUrlChange={setDressUrl}
-                onModelUrlChange={setModelUrl}
-                isLoading={isLoading}
-                onGenerate={handleGenerate}
-                canGenerate={!!dressUrl && !!modelUrl}
-                progressMsg={progressMsg}
-              />
-            }
-          />
-          <Route
-            path="/back"
-            element={
-              <ViewPage
-                title="Arka Görünüm"
-                subtitle="Kilitli Arka Çekim Modu"
-                accentColor="#59a0c5"
-                viewMode="back"
-                onDressUrlChange={setDressUrl}
-                onModelUrlChange={setModelUrl}
-                isLoading={isLoading}
-                onGenerate={handleGenerate}
-                canGenerate={!!dressUrl && !!modelUrl}
-                progressMsg={progressMsg}
-              />
-            }
-          />
-          <Route
-            path="/closeup"
-            element={
-              <ViewPage
-                title="Yakın Plan"
-                subtitle="Makro Detay Çekim Modu"
-                accentColor="#a059c5"
-                viewMode="closeup"
-                onDressUrlChange={setDressUrl}
-                onModelUrlChange={setModelUrl}
-                isLoading={isLoading}
-                onGenerate={handleGenerate}
-                canGenerate={!!dressUrl && !!modelUrl}
-                progressMsg={progressMsg}
-              />
-            }
-          />
-          <Route
-            path="/location"
-            element={
-              <ViewPage
-                title="Mekan Çekimi"
-                subtitle="Dış Mekan Editoryal Modu"
-                accentColor="#59c5a0"
-                viewMode="location"
-                onDressUrlChange={setDressUrl}
-                onModelUrlChange={setModelUrl}
-                onLocationUrlChange={setLocationUrl}
-                isLoading={isLoading}
-                onGenerate={handleGenerate}
-                canGenerate={!!dressUrl && !!modelUrl && !!locationUrl}
-                progressMsg={progressMsg}
-              />
-            }
-          />
-          <Route
-            path="/location-closeup"
-            element={
-              <ViewPage
-                title="Dış Mekan Yakın Plan"
-                subtitle="Outdoor Arka Plan Üretici"
-                accentColor="#a0c559"
-                viewMode="location-closeup"
-                onDressUrlChange={setDressUrl}
-                onModelUrlChange={setModelUrl}
-                onLocationUrlChange={setLocationUrl}
-                isLoading={isLoading}
-                onGenerate={handleGenerate}
-                canGenerate={!!dressUrl && !!modelUrl && !!locationUrl}
-                progressMsg={progressMsg}
-              />
-            }
-          />
-        </Routes>
-
-        {/* System Dock */}
-        <div className="h-10 border-t border-white/[0.04] flex items-center justify-between px-6 bg-black/30 backdrop-blur-xl relative z-10">
-          <div className="flex items-center gap-8">
-            <div className="flex items-center gap-2 text-[9px] font-bold text-white/20 uppercase tracking-widest">
-              <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 status-dot" />
-              Sunucu: <span className="text-emerald-400/60 ml-1">Optimal</span>
-            </div>
-            <div className="h-3 w-[1px] bg-white/[0.06]" />
-            <div className="flex items-center gap-2 text-[9px] font-bold text-white/20 uppercase tracking-widest">
-              Mod: <span className="ml-1" style={{ color: isLocationMode ? "#59c5a0aa" : "#c5a059aa" }}>
-                {getCurrentViewMode().toUpperCase()}
-              </span>
-            </div>
-            <div className="h-3 w-[1px] bg-white/[0.06]" />
-            <div className="flex items-center gap-2 text-[9px] font-bold text-white/20 uppercase tracking-widest">
-              Düğüm: <span className="text-[#c5a059]/70 ml-1">{engine.split('/').pop()?.toUpperCase()}</span>
+          {/* Sidebar Footer Info */}
+          <div className="pt-4 border-t border-white/5">
+            <div className="flex items-center justify-between text-[9px] text-gray-500 font-bold tracking-widest">
+              <span>HIZ: 2.4S/IT</span>
+              <span>SÜRÜM: V4.2.0</span>
             </div>
           </div>
-          <div className="text-[9px] font-mono text-white/8 uppercase font-bold tracking-wider">
-            FM_{new Date().toISOString().slice(0,10).replace(/-/g,'')}
+        </aside>
+
+        {/* CenterWorkspace */}
+        <main className="main-stage overflow-y-auto p-8 relative">
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <ViewPage
+                  title="Ön Görünüm"
+                  subtitle="Editoryal Ön Çekim Modu"
+                  accentColor="#D4AF37"
+                  viewMode="front"
+                  onDressUrlChange={setDressUrl}
+                  onModelUrlChange={setModelUrl}
+                  isLoading={isLoading}
+                  onGenerate={handleGenerate}
+                  canGenerate={!!dressUrl && !!modelUrl}
+                  progressMsg={progressMsg}
+                />
+              }
+            />
+            <Route
+              path="/back"
+              element={
+                <ViewPage
+                  title="Arka Görünüm"
+                  subtitle="Kilitli Arka Çekim Modu"
+                  accentColor="#D4AF37"
+                  viewMode="back"
+                  onDressUrlChange={setDressUrl}
+                  onModelUrlChange={setModelUrl}
+                  isLoading={isLoading}
+                  onGenerate={handleGenerate}
+                  canGenerate={!!dressUrl && !!modelUrl}
+                  progressMsg={progressMsg}
+                />
+              }
+            />
+            <Route
+              path="/closeup"
+              element={
+                <ViewPage
+                  title="Yakın Plan"
+                  subtitle="Makro Detay Çekim Modu"
+                  accentColor="#D4AF37"
+                  viewMode="closeup"
+                  onDressUrlChange={setDressUrl}
+                  onModelUrlChange={setModelUrl}
+                  isLoading={isLoading}
+                  onGenerate={handleGenerate}
+                  canGenerate={!!dressUrl && !!modelUrl}
+                  progressMsg={progressMsg}
+                />
+              }
+            />
+            <Route
+              path="/location"
+              element={
+                <ViewPage
+                  title="Mekan Çekimi"
+                  subtitle="Dış Mekan Editoryal Modu"
+                  accentColor="#D4AF37"
+                  viewMode="location"
+                  onDressUrlChange={setDressUrl}
+                  onModelUrlChange={setModelUrl}
+                  onLocationUrlChange={setLocationUrl}
+                  isLoading={isLoading}
+                  onGenerate={handleGenerate}
+                  canGenerate={!!dressUrl && !!modelUrl && !!locationUrl}
+                  progressMsg={progressMsg}
+                />
+              }
+            />
+            <Route
+              path="/location-closeup"
+              element={
+                <ViewPage
+                  title="Dış Mekan Yakın Plan"
+                  subtitle="Outdoor Arka Plan Üretici"
+                  accentColor="#D4AF37"
+                  viewMode="location-closeup"
+                  onDressUrlChange={setDressUrl}
+                  onModelUrlChange={setModelUrl}
+                  onLocationUrlChange={setLocationUrl}
+                  isLoading={isLoading}
+                  onGenerate={handleGenerate}
+                  canGenerate={!!dressUrl && !!modelUrl && !!locationUrl}
+                  progressMsg={progressMsg}
+                />
+              }
+            />
+          </Routes>
+        </main>
+
+        {/* RightSidebar (Archive) */}
+        <aside className="gallery-panel p-4 flex flex-col overflow-hidden bg-black/40">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center space-x-2">
+              <Sparkles size={16} className="text-[#D4AF37]" />
+              <h3 className="text-[12px] uppercase tracking-widest font-bold text-white">Arşiv</h3>
+            </div>
+            <span className="text-[10px] text-gray-500 font-bold">{results.length} ÇIKTI</span>
           </div>
-        </div>
+          <ResultGallery results={results} isLoading={isLoading} />
+        </aside>
       </main>
 
-      {/* ─── Results History Panel ─── */}
-      <aside className="gallery-panel p-5 overflow-hidden">
-        <ResultGallery results={results} isLoading={isLoading} />
-      </aside>
-
+      <BottomStatus shootMode={shootMode} engine={engine} setShowSettings={setShowSettings} />
       {/* ─── Enhanced Settings Modal ─── */}
       <AnimatePresence>
         {showSettings && (

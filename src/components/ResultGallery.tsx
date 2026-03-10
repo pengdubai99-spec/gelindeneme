@@ -49,8 +49,8 @@ export const ResultGallery: React.FC<Props> = ({ results, isLoading }) => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="w-5 h-5 rounded-lg bg-[#c5a059]/10 flex items-center justify-center">
-            <History size={11} className="text-[#c5a059]/60" />
+          <div className="w-5 h-5 rounded-lg bg-[#D4AF37]/10 flex items-center justify-center">
+            <History size={11} className="text-[#D4AF37]/60" />
           </div>
           <h3 className="font-display text-xs font-bold text-white/30 uppercase tracking-[0.15em]">Arşiv</h3>
           
@@ -61,7 +61,7 @@ export const ResultGallery: React.FC<Props> = ({ results, isLoading }) => {
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               onClick={() => downloadImage(results[0].url, `fashionmaster-latest-${results[0].id}.png`)}
-              className="ml-2 p-1.5 rounded-lg bg-[#c5a059]/10 border border-[#c5a059]/20 text-[#c5a059] hover:bg-[#c5a059]/20 transition-all"
+              className="ml-2 p-1.5 rounded-lg bg-[#D4AF37]/10 border border-[#D4AF37]/20 text-[#D4AF37] hover:bg-[#D4AF37]/20 transition-all"
               title="Son Çalışmayı İndir"
             >
               <Download size={12} />
@@ -108,7 +108,7 @@ export const ResultGallery: React.FC<Props> = ({ results, isLoading }) => {
               className="relative group cursor-pointer"
               onClick={() => setSelectedImage(result)}
             >
-              <div className="card-glass relative aspect-[3/4] overflow-hidden bg-[#050508] group-hover:border-[#c5a059]/15 transition-all duration-700">
+              <div className="card-glass relative aspect-[3/4] overflow-hidden bg-[#050508] group-hover:border-[#D4AF37]/15 transition-all duration-700">
                 {/* Image */}
                 <img
                   src={result.url}
@@ -131,7 +131,7 @@ export const ResultGallery: React.FC<Props> = ({ results, isLoading }) => {
                       whileHover={{ scale: 1.08 }}
                       whileTap={{ scale: 0.95 }}
                       onClick={(e) => { e.stopPropagation(); downloadImage(result.url, `fashionmaster-${result.id}.png`); }}
-                      className="w-11 h-11 bg-[#c5a059]/20 backdrop-blur-xl rounded-xl border border-[#c5a059]/20 flex items-center justify-center text-[#c5a059] hover:bg-[#c5a059]/30 transition-colors"
+                      className="w-11 h-11 bg-[#D4AF37]/20 backdrop-blur-xl rounded-xl border border-[#D4AF37]/20 flex items-center justify-center text-[#D4AF37] hover:bg-[#D4AF37]/30 transition-colors"
                     >
                       <Download size={18} />
                     </motion.button>
@@ -154,8 +154,8 @@ export const ResultGallery: React.FC<Props> = ({ results, isLoading }) => {
                     <span className="text-[8px] text-white/12 font-bold tracking-wider uppercase">{result.timestamp}</span>
                   </div>
                   <div className="flex items-center gap-1">
-                    <Zap size={7} className="text-[#c5a059]/50" fill="currentColor" />
-                    <span className="text-[7px] font-bold text-[#c5a059]/40 tracking-wider uppercase">{result.viewMode === 'back' ? 'Arka' : result.viewMode === 'closeup' ? 'Detay' : result.viewMode === 'location' ? 'Mekan' : result.viewMode === 'location-closeup' ? 'Dış Yakın' : 'Ön'} Çekim</span>
+                    <Zap size={7} className="text-[#D4AF37]/50" fill="currentColor" />
+                    <span className="text-[7px] font-bold text-[#D4AF37]/40 tracking-wider uppercase">{result.viewMode === 'back' ? 'Arka' : result.viewMode === 'closeup' ? 'Detay' : result.viewMode === 'location' ? 'Mekan' : result.viewMode === 'location-closeup' ? 'Dış Yakın' : 'Ön'} Çekim</span>
                   </div>
                 </div>
 
@@ -163,7 +163,7 @@ export const ResultGallery: React.FC<Props> = ({ results, isLoading }) => {
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   onClick={(e) => { e.stopPropagation(); downloadImage(result.url, `fashionmaster-${result.id}.png`); }}
-                  className="w-9 h-9 rounded-xl bg-[#c5a059]/10 border border-[#c5a059]/20 flex items-center justify-center text-[#c5a059] hover:bg-[#c5a059]/20 transition-all duration-300"
+                  className="w-9 h-9 rounded-xl bg-[#D4AF37]/10 border border-[#D4AF37]/20 flex items-center justify-center text-[#D4AF37] hover:bg-[#D4AF37]/20 transition-all duration-300"
                   title="Hızlı İndir"
                 >
                   <Download size={16} />
@@ -184,14 +184,14 @@ export const ResultGallery: React.FC<Props> = ({ results, isLoading }) => {
                 <motion.div
                   animate={{ y: [-200, 200] }}
                   transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}
-                  className="absolute left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#c5a059]/30 to-transparent"
+                  className="absolute left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#D4AF37]/30 to-transparent"
                 />
                 <div className="z-10 flex flex-col items-center gap-6">
                   <motion.div
                     animate={{ opacity: [0.2, 0.6, 0.2] }}
                     transition={{ repeat: Infinity, duration: 2 }}
                   >
-                    <Zap size={20} className="text-[#c5a059]/40" />
+                    <Zap size={20} className="text-[#D4AF37]/40" />
                   </motion.div>
                   <span className="text-[9px] text-white/15 font-bold tracking-[0.4em] uppercase">Sentezleniyor</span>
                 </div>
@@ -235,7 +235,7 @@ export const ResultGallery: React.FC<Props> = ({ results, isLoading }) => {
                 className="relative w-full flex justify-center bg-black/30 p-3 border border-white/[0.04] backdrop-blur-xl rounded-3xl overflow-hidden cursor-pointer"
                 onClick={(e) => { e.stopPropagation(); setIsZoomed(!isZoomed); }}
               >
-                <div className="absolute inset-0 bg-[#c5a059]/3 blur-[80px] pointer-events-none" />
+                <div className="absolute inset-0 bg-[#D4AF37]/3 blur-[80px] pointer-events-none" />
                 <motion.img
                   layout
                   src={selectedImage.url}
@@ -250,12 +250,12 @@ export const ResultGallery: React.FC<Props> = ({ results, isLoading }) => {
               <div className="w-full max-w-2xl mt-10 p-8 card-glass flex flex-wrap justify-between items-center gap-8">
                 <div className="flex items-center gap-12">
                   <div className="space-y-2">
-                    <p className="text-[#c5a059]/60 text-[9px] font-bold uppercase tracking-[0.3em]">Düğüm</p>
+                    <p className="text-[#D4AF37]/60 text-[9px] font-bold uppercase tracking-[0.3em]">Düğüm</p>
                     <p className="text-white/80 font-bold text-sm tracking-widest uppercase">{selectedImage.engine}</p>
                   </div>
                   <div className="w-[1px] h-8 bg-white/[0.06]" />
                   <div className="space-y-2">
-                    <p className="text-[#c5a059]/60 text-[9px] font-bold uppercase tracking-[0.3em]">Seed</p>
+                    <p className="text-[#D4AF37]/60 text-[9px] font-bold uppercase tracking-[0.3em]">Seed</p>
                     <p className="text-white/60 font-mono text-sm tracking-tight">{selectedImage.seed}</p>
                   </div>
                 </div>
@@ -267,7 +267,7 @@ export const ResultGallery: React.FC<Props> = ({ results, isLoading }) => {
                     onClick={() => setIsZoomed(!isZoomed)}
                     className={`flex items-center gap-2 text-xs py-3 px-6 rounded-xl border transition-all ${
                       isZoomed 
-                        ? 'bg-[#c5a059]/20 border-[#c5a059]/40 text-[#c5a059]' 
+                        ? 'bg-[#D4AF37]/20 border-[#D4AF37]/40 text-[#D4AF37]' 
                         : 'bg-white/[0.03] hover:bg-white/[0.08] border-white/[0.06] text-white/60 hover:text-white'
                     }`}
                   >

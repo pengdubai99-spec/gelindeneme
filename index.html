@@ -13,6 +13,28 @@
       name="description"
       content="The definitive high-fashion AI studio for editorial garment transfer and bridal couture preservation."
     />
+    <!-- Tailwind CSS v3 CDN -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'deep-charcoal': '#121212',
+              'luxury-gold': '#D4AF37',
+              'luxury-bronze': '#A67C00',
+              'panel-dark': 'rgba(30, 30, 30, 0.7)',
+            },
+            fontFamily: {
+              sans: ['Montserrat', 'sans-serif'],
+              serif: ['Playfair Display', 'serif'],
+            },
+          }
+        }
+      }
+    </script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet"/>
   </head>
   <body>
     <div id="root"></div>

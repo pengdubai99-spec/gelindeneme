@@ -1,9 +1,8 @@
 import React from "react";
-import { Play, ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { EngineSelector } from "../components/EngineSelector";
 import { ImageUploader } from "../components/ImageUploader";
 import { AIModelId, ViewMode } from "../services/falApi";
+import { Play, ArrowRight, Sparkles } from "lucide-react";
 
 interface ViewPageProps {
   title: string;
@@ -33,170 +32,82 @@ export const ViewPage: React.FC<ViewPageProps> = ({
   progressMsg,
 }) => {
   return (
-    <div className="flex-1 flex flex-col items-center justify-center p-8 relative z-10">
-      <motion.div
-        key={viewMode}
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: [0.2, 0.8, 0.2, 1] }}
-        className="w-full max-w-xl space-y-8"
-      >
-        {/* Hero Title */}
-        <div className="text-center space-y-3">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2, duration: 0.6 }}
-          >
-            <h2 className="font-display text-4xl font-extrabold tracking-tight leading-tight"
-              style={{
-                background: `linear-gradient(135deg, #ffffff 0%, ${accentColor}80 50%, ${accentColor} 100%)`,
-                WebkitBackgroundClip: "text",
-                backgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-              }}
-            >
-              {title}
-            </h2>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="flex items-center justify-center gap-4"
-          >
-            <div className="h-[1px] w-12 bg-gradient-to-r from-transparent" style={{ backgroundImage: `linear-gradient(to right, transparent, ${accentColor}50)` }} />
-            <p className="text-[10px] text-white/25 font-semibold uppercase tracking-[0.5em]">{subtitle}</p>
-            <div className="h-[1px] w-12 bg-gradient-to-l from-transparent" style={{ backgroundImage: `linear-gradient(to left, transparent, ${accentColor}50)` }} />
-          </motion.div>
+    <div className="max-w-6xl mx-auto w-full">
+      {/* Top Title Bar */}
+      <div className="mb-10 flex justify-between items-end">
+        <div>
+          <h2 className="text-4xl font-serif text-white tracking-tight">{title}</h2>
+          <p className="text-sm text-[#D4AF37]/80 font-light mt-2 flex items-center">
+            <Sparkles className="w-4 h-4 mr-2" />
+            {subtitle} Modu Aktif
+          </p>
+        </div>
+        
+        <button 
+          onClick={onGenerate}
+          disabled={isLoading || !canGenerate}
+          className={`bg-[#D4AF37] hover:bg-[#A67C00] text-black px-10 py-4 rounded-full flex items-center space-x-3 transition-all transform hover:scale-105 shadow-xl shadow-[#D4AF37]/20 font-bold group disabled:opacity-20 disabled:grayscale disabled:cursor-not-allowed`}
+        >
+          {isLoading ? (
+            <div className="w-5 h-5 border-2 border-black/20 border-t-black rounded-full animate-spin" />
+          ) : (
+            <Play size={18} fill="currentColor" strokeWidth={0} />
+          )}
+          <span className="text-sm uppercase tracking-widest">{isLoading ? 'Üretiliyor...' : 'Üretimi Başlat'}</span>
+          {!isLoading && <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />}
+        </button>
+      </div>
 
-          {/* View Mode Badge */}
-          <motion.div
-            initial={{ opacity: 0, y: 5 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-            className="flex justify-center"
-          >
-            <div
-              className="px-4 py-1.5 rounded-full text-[8px] font-bold uppercase tracking-[0.3em] border"
-              style={{
-                borderColor: `${accentColor}30`,
-                background: `${accentColor}08`,
-                color: `${accentColor}`,
-              }}
-            >
-              {viewMode === "front" ? "📸 Ön Çekim Modu" : viewMode === "back" ? "🔄 Arka Çekim Modu" : viewMode === "location" ? "📍 Mekan Çekim Modu" : viewMode === "location-closeup" ? "🌿 Dış Mekan Arka Plan" : "🔍 Yakın Plan Modu"}
-            </div>
-          </motion.div>
+      {/* Upload Zones Grid */}
+      <div className={`grid grid-cols-1 ${viewMode.includes('location') ? 'lg:grid-cols-3' : 'lg:grid-cols-2'} gap-8 mb-10`}>
+        {/* Slot 1: Tasarım Girişi */}
+        <div className="flex flex-col">
+          <label className="text-[11px] uppercase tracking-widest text-gray-400 mb-4 font-semibold flex justify-between px-1">
+            <span>Tasarım Girişi</span>
+            <span className="text-[#D4AF37]/60 italic font-normal">Giysi Referansı</span>
+          </label>
+          <ImageUploader label="Giysi Referansı" onUpload={onDressUrlChange} isLoading={isLoading} />
         </div>
 
-        {/* Image Assets Grid (Formerly sidebar, now main stage as per mockup) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-2">
-            <motion.div 
-               initial={{ opacity: 0, x: -20 }}
-               animate={{ opacity: 1, x: 0 }}
-               transition={{ delay: 0.6 }}
-               className="space-y-3"
-            >
-                <div className="flex items-center gap-2 px-1">
-                   <div className="w-1.5 h-1.5 rounded-full bg-[#c5a059]" />
-                   <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest">Tasarım Girişi</span>
-                </div>
-                <ImageUploader label="Giysi Referansı" onUpload={onDressUrlChange} isLoading={isLoading} />
-            </motion.div>
-
-            <motion.div 
-               initial={{ opacity: 0, x: 20 }}
-               animate={{ opacity: 1, x: 0 }}
-               transition={{ delay: 0.7 }}
-               className="space-y-3"
-            >
-                <div className="flex items-center gap-2 px-1">
-                   <div className="w-1.5 h-1.5 rounded-full bg-blue-400" />
-                   <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest">Manken Girişi</span>
-                </div>
-                <ImageUploader label="Model Konsepti" onUpload={onModelUrlChange} isLoading={isLoading} />
-            </motion.div>
-
-            {/* Location input conditionally shown in location views */}
-            {(viewMode === "location" || viewMode === "location-closeup") && (
-                <motion.div 
-                   initial={{ opacity: 0, y: 20 }}
-                   animate={{ opacity: 1, y: 0 }}
-                   className="md:col-span-2 space-y-3 pt-2"
-                >
-                    <div className="flex items-center gap-2 px-1">
-                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                        <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest">Sahne Girişi</span>
-                    </div>
-                    <ImageUploader label="Mekan Fotoğrafı" onUpload={onLocationUrlChange!} isLoading={isLoading} />
-                </motion.div>
-            )}
+        {/* Slot 2: Manken Girişi */}
+        <div className="flex flex-col">
+          <label className="text-[11px] uppercase tracking-widest text-gray-400 mb-4 font-semibold flex justify-between px-1">
+            <span>Manken Girişi</span>
+            <span className="text-[#D4AF37]/60 italic font-normal">Model Konsepti</span>
+          </label>
+          <ImageUploader label="Model Konsepti" onUpload={onModelUrlChange} isLoading={isLoading} />
         </div>
 
-        {/* Action Button & Progress */}
-        <div className="space-y-6 pt-4">
-          <div className="space-y-4">
-            <motion.button
-              whileHover={{ scale: 1.01 }}
-              whileTap={{ scale: 0.99 }}
-              onClick={onGenerate}
-              disabled={isLoading || !canGenerate}
-              className="w-full btn-primary disabled:opacity-20 disabled:grayscale disabled:cursor-not-allowed group text-base py-5"
-            >
-              <div className="flex items-center justify-center gap-4">
-                {isLoading ? (
-                  <>
-                    <div className="w-5 h-5 border-2 border-black/20 border-t-black rounded-full animate-spin" />
-                    <span>Podyum İşleniyor...</span>
-                  </>
-                ) : (
-                  <>
-                    <Play size={16} fill="currentColor" strokeWidth={0} className="group-hover:translate-x-0.5 transition-transform duration-300" />
-                    <span>Üretimi Başlat</span>
-                    <ArrowRight size={14} className="opacity-0 -ml-3 group-hover:opacity-100 group-hover:ml-0 transition-all duration-300" />
-                  </>
-                )}
-              </div>
-            </motion.button>
-
-            {/* Progress Indicator */}
-            <AnimatePresence>
-              {isLoading && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="space-y-4"
-                >
-                  <div className="loader-strip">
-                    <div className="loader-strip-fill" />
-                  </div>
-                  <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-widest px-1">
-                    <span className="text-[#c5a059]/70">{progressMsg}</span>
-                    <span className="text-[#c5a059]/40 animate-pulse">Aktif_Görev</span>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            {/* Ready State */}
-            {!isLoading && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.6 }}
-                className="flex justify-center pt-2 opacity-15 hover:opacity-40 transition-opacity duration-700"
-              >
-                <div className="flex flex-col items-center gap-2">
-                  <div className="w-[1px] h-6 bg-gradient-to-b from-white/40 to-transparent" />
-                  <p className="text-[8px] font-bold uppercase tracking-[0.4em]">Giriş İçin Hazır</p>
-                </div>
-              </motion.div>
-            )}
+        {/* Slot 3: Mekan Girişi (Optional) */}
+        {(viewMode === "location" || viewMode === "location-closeup") && (
+          <div className="flex flex-col">
+            <label className="text-[11px] uppercase tracking-widest text-gray-400 mb-4 font-semibold flex justify-between px-1">
+              <span>Mekan Girişi</span>
+              <span className="text-[#D4AF37]/60 italic font-normal">Sahne Konsepti</span>
+            </label>
+            <ImageUploader label="Mekan Fotoğrafı" onUpload={onLocationUrlChange!} isLoading={isLoading} />
           </div>
+        )}
+      </div>
+
+      {/* Live Log Overlay */}
+      <div className="glass-panel rounded-sm p-5 font-mono text-[10px] text-gray-500 border-l-2 border-l-[#D4AF37] bg-black/40">
+        <div className="flex space-x-6 mb-3">
+          <span className={isLoading ? "text-yellow-500 animate-pulse" : "text-green-500"}>
+            {isLoading ? "● İŞLENİYOR" : "● SİSTEM HAZIR"}
+          </span>
+          <span>SUNUCU: OPTIMAL</span>
+          <span className="text-[#D4AF37]">MOD: {viewMode.toUpperCase()}</span>
         </div>
-      </motion.div>
+        <div className="space-y-1 opacity-60">
+          <div>DÜĞÜM: {isLoading ? "COMPUTE_ACTIVE" : "IDLE"}</div>
+          {isLoading ? (
+            <div className="text-white/80">{progressMsg}</div>
+          ) : (
+            <div>FM_{new Date().getTime().toString().slice(-8)}_SESSION_WAITING...</div>
+          )}
+        </div>
+      </div>
     </div>
   );
 };

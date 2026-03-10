@@ -65,29 +65,12 @@ export const ImageUploader: React.FC<Props> = ({ label, onUpload, isLoading = fa
   };
 
   return (
-    <div className="flex flex-col gap-1.5">
-      <div className="flex justify-between items-center px-0.5">
-        <label className="text-[9px] font-semibold tracking-[0.12em] text-white/35 uppercase">{label}</label>
-        <AnimatePresence>
-          {preview && !localLoading && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0, x: 10 }}
-              animate={{ opacity: 1, scale: 1, x: 0 }}
-              exit={{ opacity: 0, scale: 0 }}
-              className="flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-emerald-400/10 border border-emerald-400/20"
-            >
-              <div className="w-1 h-1 rounded-full bg-emerald-400 shadow-[0_0_4px_rgba(52,211,153,0.5)]" />
-              <span className="text-[6px] font-bold text-emerald-400/80 uppercase tracking-widest">Hazır</span>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-
+    <div className="flex flex-col w-full">
       <motion.div
         whileHover={!preview ? { scale: 1.01 } : {}}
-        className={`dropzone-container group h-[100px] flex items-center justify-center relative overflow-hidden
-          ${preview ? 'border-solid !border-white/[0.08] !bg-black/50' : ''}
-          ${isDragging ? '!border-[#c5a059]/30 !bg-[#c5a059]/[0.03] scale-[1.02]' : ''}
+        className={`aspect-[4/5] glass-panel rounded-xl border-dashed border-2 flex flex-col items-center justify-center cursor-pointer transition-all group overflow-hidden relative
+          ${preview ? 'border-none shadow-2xl' : 'border-white/10 hover:border-[#D4AF37]/40 hover:bg-white/[0.02]'}
+          ${isDragging ? '!border-[#D4AF37]/60 !bg-[#D4AF37]/[0.05] scale-[1.02]' : ''}
         `}
         onClick={() => !localLoading && !isLoading && fileInputRef.current?.click()}
         onDragOver={handleDragOver}
@@ -107,41 +90,30 @@ export const ImageUploader: React.FC<Props> = ({ label, onUpload, isLoading = fa
           {preview ? (
             <motion.div
               key="preview"
-              initial={{ opacity: 0, scale: 0.9 }}
+              initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 1.05 }}
-              transition={{ type: "spring", damping: 20 }}
-              className="relative w-full h-full p-1.5 flex items-center justify-center z-10"
+              className="absolute inset-0 z-10 p-0"
             >
               <img
                 src={preview}
                 alt="Önizleme"
-                className="h-full max-w-full object-contain rounded-md shadow-2xl shadow-black/60"
+                className="w-full h-full object-cover"
               />
               <motion.button
-                whileHover={{ scale: 1.15, backgroundColor: 'rgba(255, 50, 50, 0.15)' }}
+                whileHover={{ scale: 1.1, backgroundColor: 'rgba(255, 50, 50, 0.8)' }}
                 whileTap={{ scale: 0.9 }}
                 onClick={removeImage}
-                className="absolute top-2 right-2 w-5 h-5 rounded-md bg-black/60 backdrop-blur-md text-white/25 hover:text-red-400 flex items-center justify-center transition-all duration-200 border border-white/[0.06]"
+                className="absolute top-4 right-4 w-8 h-8 rounded-full bg-black/60 backdrop-blur-md text-white flex items-center justify-center transition-all duration-200 border border-white/20 z-20"
               >
-                <X size={10} />
+                <X size={16} />
               </motion.button>
 
               {localLoading && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="absolute inset-0 bg-black/85 flex flex-col items-center justify-center rounded-lg backdrop-blur-xl z-30"
-                >
-                  <div className="w-16 h-[2px] bg-white/[0.04] relative overflow-hidden rounded-full mb-3">
-                    <motion.div
-                      animate={{ x: [-64, 64] }}
-                      transition={{ repeat: Infinity, duration: 1.2, ease: "easeInOut" }}
-                      className="absolute inset-0 bg-gradient-to-r from-transparent via-[#c5a059] to-transparent"
-                    />
-                  </div>
-                  <span className="text-[7px] text-[#c5a059]/70 font-bold tracking-[0.4em] uppercase">Yükleniyor</span>
-                </motion.div>
+                <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex flex-col items-center justify-center z-30">
+                  <div className="w-12 h-12 border-4 border-[#D4AF37]/20 border-t-[#D4AF37] rounded-full animate-spin mb-4" />
+                  <span className="text-[10px] text-[#D4AF37] font-bold tracking-[0.3em] uppercase">Hazırlanıyor</span>
+                </div>
               )}
             </motion.div>
           ) : (
@@ -150,21 +122,18 @@ export const ImageUploader: React.FC<Props> = ({ label, onUpload, isLoading = fa
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="flex items-center gap-3 z-10"
+              className="z-10 text-center p-6 flex flex-col items-center"
             >
-              <motion.div
-                animate={isDragging ? { scale: 1.15, borderColor: 'rgba(197, 160, 89, 0.3)' } : {}}
-                className="w-9 h-9 rounded-lg bg-white/[0.02] border border-white/[0.05] flex items-center justify-center text-white/20 group-hover:text-white/50 group-hover:border-white/[0.1] group-hover:bg-white/[0.04] transition-all duration-400 flex-shrink-0"
-              >
-                <ImageIcon size={16} strokeWidth={1.5} />
-              </motion.div>
-              <div className="text-left space-y-0.5">
-                <p className="text-[9px] font-bold text-white/30 uppercase tracking-[0.15em] group-hover:text-white/55 transition-colors duration-400">Kaynak Seç</p>
-                <p className="text-[7px] text-white/[0.08] font-medium group-hover:text-white/15 transition-colors duration-400">veya sürükle-bırak</p>
+              <div className="w-16 h-16 bg-[#D4AF37]/10 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                <ImageIcon className="w-8 h-8 text-[#D4AF37]" />
               </div>
+              <p className="text-sm font-medium mb-1 text-white/80">Kaynak Seç</p>
+              <p className="text-xs text-gray-500 italic">veya sürükle-bırak</p>
             </motion.div>
           )}
         </AnimatePresence>
+
+        <div className="absolute inset-0 opacity-10 bg-gradient-to-t from-[#D4AF37] to-transparent pointer-events-none"></div>
       </motion.div>
     </div>
   );
