@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Key, Settings2, X, Zap, LayoutGrid, Shield, Gem, ArrowRight, Layers, Upload, SlidersHorizontal, Sparkles, Grid3X3 } from "lucide-react";
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Key, Settings2, X, Zap, LayoutGrid, Shield, Gem, ArrowRight, Layers, Upload, SlidersHorizontal, Sparkles, Grid3X3, Menu } from "lucide-react";
+import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ImageUploader } from "./components/ImageUploader";
 import { ShootModeToggle, ViewSubTabs } from "./components/ViewModeNav";
 import { ViewPage } from "./pages/ViewPage";
 import { ResultGallery } from "./components/ResultGallery";
+import { LandingPage } from "./pages/LandingPage";
 import { fal } from "@fal-ai/client";
 import { generateBridalImage, AIModelId, ViewMode } from "./services/falApi";
 import logoUrl from "./logo.jpg";
@@ -19,47 +20,60 @@ interface GenerationResult {
   viewMode: string;
 }
 
-const MainHeader: React.FC<{ falKey: string }> = ({ falKey }) => (
-  <header className="h-16 border-b border-white/10 flex items-center justify-between px-6 bg-black/40 backdrop-blur-md z-50">
+const MainHeader: React.FC<{ falKey: string; onToggleSidebar: () => void; onToggleArchive: () => void }> = ({ falKey, onToggleSidebar, onToggleArchive }) => (
+  <header className="h-16 border-b border-white/10 flex items-center justify-between px-4 md:px-6 bg-black/40 backdrop-blur-md z-[100]">
     <div className="flex items-center space-x-3">
+      <button 
+        onClick={onToggleSidebar}
+        className="md:hidden text-white/70 hover:text-[#D4AF37] transition-colors"
+      >
+        <Menu size={20} />
+      </button>
       <div className="flex flex-col">
-        <h1 className="font-serif text-2xl tracking-widest text-[#D4AF37] uppercase leading-none">Fashion Master</h1>
-        <span className="text-[10px] tracking-[0.3em] text-gray-400 font-light mt-1 uppercase">Haute Couture Studio</span>
+        <h1 className="font-serif text-lg md:text-2xl tracking-widest text-[#D4AF37] uppercase leading-none">Fashion Master</h1>
+        <span className="text-[8px] md:text-[10px] tracking-[0.3em] text-gray-400 font-light mt-1 uppercase">Haute Couture Studio</span>
       </div>
     </div>
-    <div className="flex items-center space-x-6 text-sm">
-      <div className="flex items-center space-x-2 text-green-500">
+    <div className="flex items-center space-x-3 md:space-x-6 text-sm">
+      <div className="hidden sm:flex items-center space-x-2 text-green-500">
         <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
         <span className="text-xs font-medium">Sistem Çevrimiçi</span>
       </div>
-      <div className="flex items-center space-x-4">
+      <div className="flex items-center space-x-2 md:space-x-4">
+        <button 
+          onClick={onToggleArchive}
+          className="md:hidden text-white/70 hover:text-[#D4AF37] transition-colors"
+        >
+          <Sparkles size={18} />
+        </button>
         <button className="text-gray-400 hover:text-[#D4AF37] transition-colors">
           <Settings2 size={20} strokeWidth={1.5} />
         </button>
-        <div className="w-8 h-8 rounded-full bg-[#D4AF37]/20 border border-[#D4AF37]/40 flex items-center justify-center text-[#D4AF37] text-xs font-bold">JD</div>
+        <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-[#D4AF37]/20 border border-[#D4AF37]/40 flex items-center justify-center text-[#D4AF37] text-[10px] md:text-xs font-bold">JD</div>
       </div>
     </div>
   </header>
 );
 
 const BottomStatus: React.FC<{ shootMode: string; engine: string; setShowSettings: (show: boolean) => void }> = ({ shootMode, engine, setShowSettings }) => (
-  <footer className="h-8 bg-black border-t border-white/5 flex items-center px-4 justify-between z-50">
-    <div className="flex items-center space-x-4">
+  <footer className="h-8 bg-black border-t border-white/5 flex items-center px-4 justify-between z-[100]">
+    <div className="flex items-center space-x-2 md:space-x-4 overflow-hidden">
       <button 
         onClick={() => setShowSettings(true)}
-        className="text-[10px] text-gray-500 hover:text-white flex items-center transition-colors"
+        className="text-[9px] md:text-[10px] text-gray-500 hover:text-white flex items-center transition-colors flex-shrink-0"
       >
-        <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-        Sistem Erişimi
+        <span className="w-1.5 h-1.5 md:w-2 md:h-2 bg-green-500 rounded-full mr-2"></span>
+        <span className="hidden xs:inline">Sistem Erişimi</span>
+        <span className="xs:hidden">Erişim</span>
       </button>
       <span className="text-[10px] text-gray-700">|</span>
-      <span className="text-[10px] text-gray-500">Çekim Modu: {shootMode.toUpperCase()}</span>
-      <span className="text-[10px] text-gray-700">|</span>
-      <span className="text-[10px] text-gray-500">Düğüm: {engine.split('/').pop()?.toUpperCase()}</span>
+      <span className="text-[9px] md:text-[10px] text-gray-500 truncate whitespace-nowrap">Mod: {shootMode.toUpperCase()}</span>
+      <span className="hidden sm:inline text-[10px] text-gray-700">|</span>
+      <span className="hidden sm:inline text-[10px] text-gray-500 truncate whitespace-nowrap">Düğüm: {engine.split('/').pop()?.toUpperCase()}</span>
     </div>
-    <div className="flex items-center space-x-6 text-[10px] text-gray-500">
-      <span>Latans: 42ms</span>
-      <span>Oturum ID: FM_{new Date().getTime().toString().slice(-5)}</span>
+    <div className="flex items-center space-x-3 md:space-x-6 text-[9px] md:text-[10px] text-gray-500">
+      <span className="hidden xs:inline">Latans: 42ms</span>
+      <span className="truncate whitespace-nowrap">ID: FM_{new Date().getTime().toString().slice(-5)}</span>
     </div>
   </footer>
 );
@@ -106,8 +120,12 @@ const App: React.FC = () => {
   const [showSettings, setShowSettings] = useState<boolean>(!localStorage.getItem("FAL_KEY") && !import.meta.env.VITE_FAL_KEY);
   const [progressMsg, setProgressMsg] = useState<string>("");
   const [shootMode, setShootMode] = useState<"studio" | "location">("studio");
+  const [showLanding, setShowLanding] = useState<boolean>(!sessionStorage.getItem("studio_visited"));
+  const [showMobileSidebar, setShowMobileSidebar] = useState<boolean>(false);
+  const [showMobileArchive, setShowMobileArchive] = useState<boolean>(false);
 
   const location = useLocation();
+  const navigate = useNavigate();
 
   const getCurrentViewMode = (): ViewMode => {
     if (location.pathname === "/back") return "back";
@@ -216,23 +234,79 @@ const App: React.FC = () => {
 
   const isLocationMode = shootMode === "location";
 
+  const handleGenerateVideo = (result: GenerationResult) => {
+    navigate("/video", {
+      state: { imageUrl: result.url, autoGenerate: true, viewMode: result.viewMode },
+    });
+  };
+
+  // Show landing page on first visit
+  if (showLanding) {
+    return (
+      <LandingPage
+        onSelectPhoto={() => {
+          sessionStorage.setItem("studio_visited", "1");
+          setShowLanding(false);
+        }}
+        onSelectVideo={() => {
+          sessionStorage.setItem("studio_visited", "1");
+          setShowLanding(false);
+          navigate("/video");
+        }}
+      />
+    );
+  }
+
   return (
     <div className="app-container flex flex-col h-screen overflow-hidden bg-[#121212] selection:bg-[#D4AF37]/30">
-      <MainHeader falKey={falKey} />
+      <MainHeader 
+        falKey={falKey} 
+        onToggleSidebar={() => setShowMobileSidebar(!showMobileSidebar)} 
+        onToggleArchive={() => setShowMobileArchive(!showMobileArchive)} 
+      />
       
       <main className="flex flex-row flex-1 overflow-hidden relative">
-        {/* BEGIN: LeftSidebar */}
-        <aside className="sidebar glass-panel overflow-y-auto p-4 flex flex-col space-y-6">
+        {/* Mobile Sidebar Overlay */}
+        <AnimatePresence>
+          {showMobileSidebar && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowMobileSidebar(false)}
+              className="fixed inset-0 bg-black/60 z-[60] md:hidden backdrop-blur-sm"
+            />
+          )}
+        </AnimatePresence>
+
+        {/* LeftSidebar */}
+        <aside className={`
+          sidebar glass-panel overflow-y-auto p-4 flex flex-col space-y-6
+          fixed md:relative inset-y-0 left-0 w-64 z-[70] md:z-0
+          transform transition-transform duration-300 md:transform-none
+          ${showMobileSidebar ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+        `}>
+          <div className="flex md:hidden items-center justify-between mb-2">
+            <h3 className="text-[11px] font-bold text-[#D4AF37] uppercase tracking-widest">AYARLAR</h3>
+            <button onClick={() => setShowMobileSidebar(false)} className="text-gray-500 p-1">
+              <X size={16} />
+            </button>
+          </div>
           {/* Section: Çekim Modu */}
           <section>
             <h3 className="text-[10px] uppercase tracking-widest text-[#D4AF37] mb-3 font-semibold">Çekim Modu</h3>
-            <ShootModeToggle shootMode={shootMode} onShootModeChange={setShootMode} />
+            <ShootModeToggle shootMode={shootMode} onShootModeChange={(mode) => {
+              setShootMode(mode);
+              if (window.innerWidth < 768) setShowMobileSidebar(false);
+            }} />
           </section>
 
           {/* Section: Görünüm Seçimi */}
           <section>
             <h3 className="text-[10px] uppercase tracking-widest text-[#D4AF37] mb-3 font-semibold">Görünüm Seçimi</h3>
-            <ViewSubTabs shootMode={shootMode} />
+            <div onClick={() => window.innerWidth < 768 && setShowMobileSidebar(false)}>
+              <ViewSubTabs shootMode={shootMode} />
+            </div>
           </section>
 
           {/* Section: İşlem Düğümü */}
@@ -294,7 +368,7 @@ const App: React.FC = () => {
         </aside>
 
         {/* CenterWorkspace */}
-        <main className="main-stage overflow-y-auto p-8 relative">
+        <main className="main-stage overflow-y-auto p-4 md:p-8 relative flex-1">
           <Routes>
             <Route
               path="/"
@@ -386,16 +460,44 @@ const App: React.FC = () => {
           </Routes>
         </main>
 
+        {/* RightSidebar (Archive) Overlay for Mobile */}
+        <AnimatePresence>
+          {showMobileArchive && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowMobileArchive(false)}
+              className="fixed inset-0 bg-black/60 z-[60] md:hidden backdrop-blur-sm"
+            />
+          )}
+        </AnimatePresence>
+
         {/* RightSidebar (Archive) */}
-        <aside className="gallery-panel p-4 flex flex-col overflow-hidden bg-black/40">
+        <aside className={`
+          gallery-panel p-4 flex flex-col overflow-hidden bg-black/40
+          fixed md:relative inset-y-0 right-0 w-80 z-[70] md:z-0
+          transform transition-transform duration-300 md:transform-none
+          ${showMobileArchive ? 'translate-x-0' : 'translate-x-full md:translate-x-0'}
+        `}>
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center space-x-2">
               <Sparkles size={16} className="text-[#D4AF37]" />
               <h3 className="text-[12px] uppercase tracking-widest font-bold text-white">Arşiv</h3>
             </div>
-            <span className="text-[10px] text-gray-500 font-bold">{results.length} ÇIKTI</span>
+            <div className="flex items-center space-x-3">
+              <span className="text-[10px] text-gray-500 font-bold">{results.length} ÇIKTI</span>
+              <button 
+                onClick={() => setShowMobileArchive(false)}
+                className="md:hidden text-white/50 hover:text-white"
+              >
+                <X size={16} />
+              </button>
+            </div>
           </div>
-          <ResultGallery results={results} isLoading={isLoading} />
+          <div className="flex-1 overflow-y-auto pr-1">
+            <ResultGallery results={results} isLoading={isLoading} onGenerateVideo={handleGenerateVideo} />
+          </div>
         </aside>
       </main>
 
