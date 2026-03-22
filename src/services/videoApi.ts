@@ -3,11 +3,12 @@ import { fal } from "./falClient";
 export interface VideoGenerationParams {
   imageUrl: string;
   duration?: number;
+  mode?: 'studio' | 'outdoor';
 }
 
 // PREMIUM FASHION FILM SYSTEM — VIDEO VERSION
 // Locked master prompt for all video generations
-export const VIDEO_LOCKED_PROMPT = `Use the provided input image as the visual reference for the outfit, styling, and studio mood.
+export const VIDEO_STUDIO_PROMPT = `Use the provided input image as the visual reference for the outfit, styling, and studio mood.
 
 Create a premium high-end fashion film in a clean seamless infinity studio. Keep the outfit design, garment structure, silhouette, styling logic, fabric appearance, surface character, drape behavior, and overall visual integrity consistent with the reference image. Do not redesign the outfit. Do not add or remove design elements. Do not alter the garment's cut, length, proportions, color family, texture impression, or styling details.
 
@@ -57,16 +58,67 @@ Constraints:
 Overall result:
 A polished, globally acceptable luxury fashion film with industry-standard camera language, designed to present the referenced outfit in a clean professional infinity studio with maximum product clarity and premium editorial impact.`;
 
+export const VIDEO_OUTDOOR_PROMPT = `Use the provided input image as the visual reference for the outfit, styling, and model identity.
+
+Create a premium high-end fashion film set in a magnificent outdoor location. The background should be a historic European castle or palace with a vast botanical garden, symmetrical hedges, blooming flowers, and elegant stone pathways. Keep the outfit design, garment structure, silhouette, styling logic, fabric appearance, surface character, drape behavior, and overall visual integrity consistent with the reference image. Do not redesign the outfit. Do not add or remove design elements. Do not alter the garment's cut, length, proportions, color family, texture impression, or styling details.
+
+The environment should feel luxury and romantic, matching the grand scale of a high-end European couture campaign. No props, no additional objects, no environmental transformation within the scene, no extra wardrobe items.
+
+The model should remain visually consistent with the reference image in overall presentation, styling continuity, and fashion pose logic, while preserving a natural editorial fashion-film look. Maintain a refined, realistic, professional luxury campaign aesthetic.
+
+The framing must work in both vertical and horizontal output formats. Adapt composition intelligently to the chosen format while preserving full garment readability, grand environmental scale, and premium fashion presentation.
+
+Style: luxury fashion campaign film, premium editorial, hyper-real, cinematic, outdoor fashion photography, sophisticated, grand.
+Lighting: natural golden hour sunlight, soft professional shadows, flattering highlights on the garment and skin, refined contrast, high-end fashion photography quality.
+Motion: graceful, minimal, editorial model movement only. Natural fabric movement caused by a soft breeze. No exaggerated acting. No distortion. No sudden pose jumps. Preserve natural fabric behavior and polished fashion presence.
+
+Duration: 8 seconds total
+
+SHOT 1 | 0.0s to 2.6s
+Wide establishing fashion shot showcasing the grand outdoor architecture and formal gardens.
+Camera performs a slow, elegant dolly-in towards the model.
+The model makes a subtle weight shift and a minimal pose transition, looking towards the landscape with a calm editorial presence.
+Keep the garment clearly visible and grandly presented within the environment.
+
+SHOT 2 | 2.6s to 5.2s
+Medium fashion shot.
+Camera performs a gentle orbit move around the model, approximately 15 to 20 degrees, with refined and stable motion showing the garden depth.
+The model adds a soft shoulder turn and a delicate hand movement towards the fabric, allowing the light to catch the couture details.
+Preserve the garment's silhouette, drape, styling, and overall visual continuity.
+
+SHOT 3 | 5.2s to 8.0s
+Closer hero fashion shot.
+Camera slowly pushes in with subtle floating elegance, ending on a premium campaign-style final frame.
+The model holds a calm, confident, editorial expression with a refined final micro-pose as a soft breeze gently affects the fabric.
+Keep the outfit readable and visually faithful to the reference.
+
+Constraints:
+- Keep the outfit visually faithful to the reference
+- Preserve the same garment design language and styling continuity
+- Do not change the fabric impression, color family, structure, or silhouette
+- No extra accessories
+- No background changes (stay in the gardens/palace)
+- No flicker
+- No warping
+- No anatomy distortion
+- No random garment mutation
+- No dramatic effects that distract from the product
+- Keep the fashion presentation elegant, minimal, realistic, and premium
+
+Overall result:
+A polished, globally acceptable luxury fashion film with industry-standard camera language, designed to present the referenced outfit in a grand outdoor botanical garden with maximum product clarity and premium editorial impact.`;
+
 export const generateVideoFromImage = async (
   params: VideoGenerationParams,
   onUpdate?: (msg: string) => void
 ): Promise<string> => {
-  const { imageUrl, duration = 8 } = params;
+  const { imageUrl, duration = 8, mode = 'studio' } = params;
+  const prompt = mode === 'outdoor' ? VIDEO_OUTDOOR_PROMPT : VIDEO_STUDIO_PROMPT;
 
   // Using Veo 3.1 (Standard) for higher reliability with complex prompts
   const result = await fal.subscribe("fal-ai/veo3.1/image-to-video", {
     input: {
-      prompt: VIDEO_LOCKED_PROMPT,
+      prompt,
       image_url: imageUrl,
       duration: duration, // Use number instead of "8s"
       aspect_ratio: "9:16",

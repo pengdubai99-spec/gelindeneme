@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Download, Play, Film, Sparkles, Upload, Image as ImageIcon, X, AlertTriangle, Zap } from "lucide-react";
 import { fal, initFal } from "../services/falClient";
-import { generateVideoFromImage, VIDEO_LOCKED_PROMPT } from "../services/videoApi";
+import { generateVideoFromImage, VIDEO_STUDIO_PROMPT } from "../services/videoApi";
 import { uploadFile } from "../services/falApi";
 import { useAuth } from "../context/AuthContext";
 import { PricingModal } from "../components/PricingModal";
@@ -33,6 +33,7 @@ export const VideoPage: React.FC = () => {
   const [showAuth, setShowAuth] = useState(false);
   
   const { user, credits, deductCredits } = useAuth();
+  const [currentMode, setCurrentMode] = useState<'studio' | 'outdoor'>('studio');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -44,7 +45,7 @@ export const VideoPage: React.FC = () => {
   // Auto-generate if we came from the gallery with an image
   useEffect(() => {
     if (state.imageUrl && state.autoGenerate) {
-      handleGenerate(state.imageUrl);
+      handleGenerate('studio', state.imageUrl);
     }
   }, []);
 
@@ -69,7 +70,8 @@ export const VideoPage: React.FC = () => {
     }
   };
 
-  const handleGenerate = async (urlOverride?: string) => {
+  const handleGenerate = async (mode: 'studio' | 'outdoor' = 'studio', urlOverride?: string) => {
+    setCurrentMode(mode);
     const targetUrl = urlOverride || imageUrl;
 
     if (!user) {
@@ -108,7 +110,7 @@ export const VideoPage: React.FC = () => {
 
       setProgressMsg("Veo 3.1 Pro Başlatılıyor...");
       const url = await generateVideoFromImage(
-        { imageUrl: targetUrl, duration: 8 },
+        { imageUrl: targetUrl, duration: 8, mode },
         (msg) => setProgressMsg(msg)
       );
       setVideoUrl(url);
@@ -312,44 +314,62 @@ export const VideoPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Generate Button */}
-          <motion.button
-            whileHover={!isGenerating && !isUploading && !!imageUrl ? { scale: 1.02, y: -2 } : {}}
-            whileTap={!isGenerating && !isUploading && !!imageUrl ? { scale: 0.97 } : {}}
-            onClick={() => handleGenerate()}
-            disabled={isGenerating || isUploading || (!imageUrl && !previewUrl)}
-            className={`relative w-full py-4 rounded-xl font-bold text-[11px] uppercase tracking-[0.25em] transition-all duration-400 overflow-hidden
-              ${(imageUrl || previewUrl) && !isGenerating && !isUploading
-                ? "bg-gradient-to-r from-[#c27ba0] to-[#a0607f] text-white shadow-[0_4px_20px_rgba(194,123,160,0.25)] hover:shadow-[0_6px_28px_rgba(194,123,160,0.35)]"
-                : "bg-white/[0.04] text-white/20 cursor-not-allowed border border-white/[0.04]"
-              }
-            `}
-          >
-            {isUploading ? (
-              <span className="flex items-center justify-center gap-2">
-                <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ repeat: Infinity, duration: 1.2, ease: "linear" }}
-                  className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full"
-                />
-                Yükleniyor...
-              </span>
-            ) : isGenerating ? (
-              <span className="flex items-center justify-center gap-2">
-                <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ repeat: Infinity, duration: 1.2, ease: "linear" }}
-                  className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full"
-                />
-                Üretiliyor...
-              </span>
-            ) : (
-              <span className="flex items-center justify-center gap-2">
-                <Film size={14} />
-                Video Üret
-              </span>
-            )}
-          </motion.button>
+          <div className="flex flex-col gap-3 mt-auto">
+            {/* Studio Generate Button */}
+            <motion.button
+              whileHover={!isGenerating && !isUploading && !!imageUrl ? { scale: 1.02, y: -1 } : {}}
+              whileTap={!isGenerating && !isUploading && !!imageUrl ? { scale: 0.98 } : {}}
+              onClick={() => handleGenerate('studio')}
+              disabled={isGenerating || isUploading || (!imageUrl && !previewUrl)}
+              className={`relative w-full py-4 rounded-xl font-bold text-[11px] uppercase tracking-[0.25em] transition-all duration-400 overflow-hidden
+                ${(imageUrl || previewUrl) && !isGenerating && !isUploading
+                  ? "bg-white/5 border border-white/10 text-white hover:bg-white/10 hover:border-white/20"
+                  : "bg-white/[0.04] text-white/20 cursor-not-allowed border border-white/[0.04]"
+                }
+              `}
+            >
+              {isGenerating ? (
+                <span className="flex items-center justify-center gap-2">Stüdyo...</span>
+              ) : (
+                <span className="flex items-center justify-center gap-2 text-white/80">
+                  <Film size={14} className="text-[#c27ba0]" />
+                  Stüdyo Video
+                </span>
+              )}
+            </motion.button>
+
+            {/* Outdoor Generate Button */}
+            <motion.button
+              whileHover={!isGenerating && !isUploading && !!imageUrl ? { scale: 1.02, y: -1 } : {}}
+              whileTap={!isGenerating && !isUploading && !!imageUrl ? { scale: 0.98 } : {}}
+              onClick={() => handleGenerate('outdoor')}
+              disabled={isGenerating || isUploading || (!imageUrl && !previewUrl)}
+              className={`relative w-full py-4 rounded-xl font-bold text-[11px] uppercase tracking-[0.25em] transition-all duration-400 overflow-hidden
+                ${(imageUrl || previewUrl) && !isGenerating && !isUploading
+                  ? "bg-gradient-to-r from-[#c27ba0] to-[#a0607f] text-white shadow-[0_4px_20px_rgba(194,123,160,0.25)] hover:shadow-[0_6px_28px_rgba(194,123,160,0.35)]"
+                  : "bg-white/[0.04] text-white/20 cursor-not-allowed border border-white/[0.04]"
+                }
+              `}
+            >
+              {isUploading ? (
+                <span className="flex items-center justify-center gap-2 opacity-50">Yükleniyor...</span>
+              ) : isGenerating ? (
+                <span className="flex items-center justify-center gap-2">
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ repeat: Infinity, duration: 1.2, ease: "linear" }}
+                    className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full"
+                  />
+                  Üretiliyor...
+                </span>
+              ) : (
+                <span className="flex items-center justify-center gap-2">
+                  <Sparkles size={14} />
+                  Dış Mekan Video
+                </span>
+              )}
+            </motion.button>
+          </div>
 
           {/* Error */}
           <AnimatePresence>
@@ -466,7 +486,7 @@ export const VideoPage: React.FC = () => {
                   <motion.button
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.97 }}
-                    onClick={() => handleGenerate()}
+                    onClick={() => handleGenerate(currentMode)}
                     className="px-5 py-3.5 rounded-xl border border-white/[0.08] bg-white/[0.03] text-white/40 hover:text-white/70 hover:border-white/[0.15] transition-all duration-300 text-[10px] font-bold uppercase tracking-[0.15em]"
                   >
                     Yeniden Üret
