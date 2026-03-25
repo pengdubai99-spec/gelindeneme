@@ -47,7 +47,7 @@ const MainHeader: React.FC<{
           className="flex flex-col cursor-pointer group"
         >
           <div className="flex items-center space-x-2">
-            <h1 className="font-serif text-sm md:text-2xl tracking-widest text-[#D4AF37] uppercase leading-none group-hover:text-white transition-colors">Fashion Master</h1>
+            <h1 className="font-serif text-sm md:text-2xl tracking-widest text-[#D4AF37] uppercase leading-none group-hover:text-white transition-colors">Gelin Deneme</h1>
           </div>
           <span className="text-[7px] md:text-[10px] tracking-[0.3em] text-gray-400 font-light mt-1 uppercase">Haute Couture Studio</span>
         </div>
@@ -236,7 +236,7 @@ const App: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             className="mb-12"
           >
-            <img src={logoUrl} alt="FashionMaster" className="w-40 md:w-56 mx-auto mb-4 opacity-90 mix-blend-screen" />
+            <img src={logoUrl} alt="Gelin Deneme" className="w-40 md:w-56 mx-auto mb-4 opacity-90 mix-blend-screen" />
             <div className="h-[1px] w-24 bg-gradient-to-r from-transparent via-[#D4AF37]/30 to-transparent mx-auto" />
           </motion.div>
           <AuthModal isOpen={true} onClose={() => {}} />
@@ -340,11 +340,6 @@ const App: React.FC = () => {
 
   const isLocationMode = shootMode === "location";
 
-  const handleGenerateVideo = (result: GenerationResult) => {
-    navigate("/video", {
-      state: { imageUrl: result.url, autoGenerate: true, viewMode: result.viewMode },
-    });
-  };
 
   const handleOpenPricing = () => {
     navigate("/pricing");
@@ -362,11 +357,6 @@ const App: React.FC = () => {
           onSelectPhoto={() => {
             sessionStorage.setItem("studio_visited", "1");
             setShowLanding(false);
-          }}
-          onSelectVideo={() => {
-            sessionStorage.setItem("studio_visited", "1");
-            setShowLanding(false);
-            navigate("/video");
           }}
         />
         <AuthModal isOpen={showAuth} onClose={() => setShowAuth(false)} />
@@ -618,7 +608,7 @@ const App: React.FC = () => {
             </div>
           </div>
           <div className="flex-1 overflow-y-auto pr-1">
-            <ResultGallery results={results} isLoading={isLoading} onGenerateVideo={handleGenerateVideo} />
+            <ResultGallery results={results} isLoading={isLoading} />
           </div>
         </aside>
       </main>

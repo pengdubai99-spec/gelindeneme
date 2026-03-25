@@ -16,7 +16,7 @@ const PACKAGES = [
     price: '₺1349',
     popular: false,
     color: '#CD7F32',
-    benefits: ['1000 Üretim Kontörü', '15 Fotoğraf veya 6 Video', 'Standart Hız', 'Süresiz Kullanım']
+    benefits: ['1000 Üretim Kontörü', '15 Profesyonel Çekim', 'Standart Hız', 'Süresiz Kullanım']
   },
   {
     id: 'package_2500',
@@ -25,7 +25,7 @@ const PACKAGES = [
     price: '₺2999',
     popular: true,
     color: '#C0C0C0',
-    benefits: ['2500 Üretim Kontörü', '38 Fotoğraf veya 15 Video', 'Öncelikli Render', 'Süresiz Kullanım', 'Destek Önceliği']
+    benefits: ['2500 Üretim Kontörü', '38 Profesyonel Çekim', 'Öncelikli Render', 'Süresiz Kullanım', 'Destek Önceliği']
   },
   {
     id: 'package_5000',
@@ -34,7 +34,7 @@ const PACKAGES = [
     price: '₺5499',
     popular: false,
     color: '#D4AF37',
-    benefits: ['5000 Üretim Kontörü', '76 Fotoğraf veya 30 Video', 'Ultra Hızlı Render', 'Süresiz Kullanım', 'Vip Destek']
+    benefits: ['5000 Üretim Kontörü', '76 Profesyonel Çekim', 'Ultra Hızlı Render', 'Süresiz Kullanım', 'Vip Destek']
   }
 ];
 
@@ -47,7 +47,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({ isOpen, onClose }) =
       return;
     }
     
-    const message = `Merhaba, FashionMaster üzerinden ${pkg.name} Paketi (${pkg.price}) satın almak istiyorum. %0A%0AKullanıcı: ${user.email}`;
+    const message = `Merhaba, Gelin Deneme üzerinden ${pkg.name} Paketi (${pkg.price}) satın almak istiyorum. %0A%0AKullanıcı: ${user.email}`;
     const whatsappUrl = `https://wa.me/905545050967?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
   };
@@ -141,7 +141,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({ isOpen, onClose }) =
                 <span className="flex items-center gap-1.5"><Zap size={10} /> Hızlı</span>
               </div>
               <p className="text-[9px] sm:text-[11px] text-gray-600 text-center">
-                * Fotoğraf üretimi: 65 kontür, Video üretimi: 165 kontür.
+                * Bir tasarım üretimi 65 kontürdür.
               </p>
             </div>
           </motion.div>

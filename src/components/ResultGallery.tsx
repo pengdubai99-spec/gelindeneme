@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Download, Maximize2, X, Clock, ExternalLink, Zap, History, LayoutGrid, Film } from "lucide-react";
+import { Download, Maximize2, X, Clock, ExternalLink, Zap, History, LayoutGrid } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface GenerationResult {
@@ -14,10 +14,9 @@ interface GenerationResult {
 interface Props {
   results: GenerationResult[];
   isLoading?: boolean;
-  onGenerateVideo?: (result: GenerationResult) => void;
 }
 
-export const ResultGallery: React.FC<Props> = ({ results, isLoading, onGenerateVideo }) => {
+export const ResultGallery: React.FC<Props> = ({ results, isLoading }) => {
   const [selectedImage, setSelectedImage] = useState<GenerationResult | null>(null);
   const [isZoomed, setIsZoomed] = useState<boolean>(false);
 
@@ -61,7 +60,7 @@ export const ResultGallery: React.FC<Props> = ({ results, isLoading, onGenerateV
               animate={{ opacity: 1, x: 0 }}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
-              onClick={() => downloadImage(results[0].url, `fashionmaster-latest-${results[0].id}.png`)}
+              onClick={() => downloadImage(results[0].url, `gelindeneme-latest-${results[0].id}.png`)}
               className="ml-2 p-1.5 rounded-lg bg-[#D4AF37]/10 border border-[#D4AF37]/20 text-[#D4AF37] hover:bg-[#D4AF37]/20 transition-all"
               title="Son Çalışmayı İndir"
             >
@@ -119,18 +118,6 @@ export const ResultGallery: React.FC<Props> = ({ results, isLoading, onGenerateV
 
                 {/* Hover Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col items-center justify-end p-4 gap-3">
-                  {/* Video generate button */}
-                  {onGenerateVideo && (
-                    <motion.button
-                      whileHover={{ scale: 1.04 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={(e) => { e.stopPropagation(); onGenerateVideo(result); }}
-                      className="w-full flex items-center justify-center gap-2 py-2.5 bg-[#c27ba0]/80 backdrop-blur-xl rounded-xl border border-[#c27ba0]/40 text-white font-bold text-[9px] uppercase tracking-[0.2em] hover:bg-[#c27ba0] transition-colors"
-                    >
-                      <Film size={13} />
-                      Video Üret
-                    </motion.button>
-                  )}
                   <div className="flex gap-2.5">
                     <motion.button
                       whileHover={{ scale: 1.08 }}
@@ -143,7 +130,7 @@ export const ResultGallery: React.FC<Props> = ({ results, isLoading, onGenerateV
                     <motion.button
                       whileHover={{ scale: 1.08 }}
                       whileTap={{ scale: 0.95 }}
-                      onClick={(e) => { e.stopPropagation(); downloadImage(result.url, `fashionmaster-${result.id}.png`); }}
+                      onClick={(e) => { e.stopPropagation(); downloadImage(result.url, `gelindeneme-${result.id}.png`); }}
                       className="w-10 h-10 bg-[#D4AF37]/20 backdrop-blur-xl rounded-xl border border-[#D4AF37]/20 flex items-center justify-center text-[#D4AF37] hover:bg-[#D4AF37]/30 transition-colors"
                     >
                       <Download size={16} />
@@ -175,7 +162,7 @@ export const ResultGallery: React.FC<Props> = ({ results, isLoading, onGenerateV
                 <motion.button
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
-                  onClick={(e) => { e.stopPropagation(); downloadImage(result.url, `fashionmaster-${result.id}.png`); }}
+                  onClick={(e) => { e.stopPropagation(); downloadImage(result.url, `gelindeneme-${result.id}.png`); }}
                   className="w-9 h-9 rounded-xl bg-[#D4AF37]/10 border border-[#D4AF37]/20 flex items-center justify-center text-[#D4AF37] hover:bg-[#D4AF37]/20 transition-all duration-300"
                   title="Hızlı İndir"
                 >
@@ -290,7 +277,7 @@ export const ResultGallery: React.FC<Props> = ({ results, isLoading, onGenerateV
                   <motion.button
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.97 }}
-                    onClick={() => downloadImage(selectedImage.url, `fashionmaster-${selectedImage.id}.png`)}
+                    onClick={() => downloadImage(selectedImage.url, `gelindeneme-${selectedImage.id}.png`)}
                     className="btn-primary text-xs py-3 px-6"
                   >
                     İndir

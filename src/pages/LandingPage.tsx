@@ -1,19 +1,18 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { Camera, Video, ArrowRight, Sparkles, Film, User as UserIcon, LogOut } from "lucide-react";
+import { Camera, ArrowRight, User as UserIcon, LogOut } from "lucide-react";
 import logoUrl from "../logo.jpg";
 import { User } from "@supabase/supabase-js";
 
 interface Props {
   onSelectPhoto: () => void;
-  onSelectVideo: () => void;
   user: User | null;
   onOpenAuth: () => void;
   onSignOut: () => void;
   onOpenPricing: () => void;
 }
 
-export const LandingPage: React.FC<Props> = ({ onSelectPhoto, onSelectVideo, user, onOpenAuth, onSignOut, onOpenPricing }) => {
+export const LandingPage: React.FC<Props> = ({ onSelectPhoto, user, onOpenAuth, onSignOut, onOpenPricing }) => {
   return (
     <div className="fixed inset-0 bg-[#0a0a0a] flex flex-col items-center justify-start sm:justify-center z-[9999] overflow-y-auto sm:overflow-hidden py-12 px-6">
       {/* Ambient radial glows */}
@@ -74,7 +73,7 @@ export const LandingPage: React.FC<Props> = ({ onSelectPhoto, onSelectVideo, use
       >
         <img
           src={logoUrl}
-          alt="FashionMaster"
+          alt="Gelin Deneme"
           className="mx-auto mb-3 w-40 sm:w-[220px]"
           style={{ mixBlendMode: "screen", opacity: 0.9 }}
         />
@@ -127,45 +126,6 @@ export const LandingPage: React.FC<Props> = ({ onSelectPhoto, onSelectVideo, use
           </div>
         </motion.button>
 
-        {/* ── Video Card ── */}
-        <motion.button
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.65, delay: 0.6, ease: [0.2, 0.8, 0.2, 1] }}
-          whileHover={{ scale: 1.03, y: -6 }}
-          whileTap={{ scale: 0.97 }}
-          onClick={onSelectVideo}
-          className="group relative w-full sm:w-72 aspect-[16/9] sm:aspect-auto sm:h-80 rounded-2xl border border-white/[0.08] bg-gradient-to-b from-white/[0.04] to-transparent backdrop-blur-xl p-6 sm:p-8 flex flex-col justify-between text-left overflow-hidden cursor-pointer hover:border-[#c27ba0]/35 transition-all duration-500"
-        >
-          {/* Rose hover glow */}
-          <div className="absolute inset-0 bg-gradient-to-b from-[#c27ba0]/0 to-[#c27ba0]/0 group-hover:from-[#c27ba0]/[0.04] group-hover:to-transparent transition-all duration-700 pointer-events-none rounded-2xl" />
-
-          {/* Veo badge */}
-          <div className="absolute top-4 right-4 sm:top-5 sm:right-5 flex items-center gap-1 sm:gap-1.5 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full bg-[#c27ba0]/10 border border-[#c27ba0]/20">
-            <Sparkles size={8} className="text-[#c27ba0]/80" />
-            <span className="text-[6px] sm:text-[7px] font-bold text-[#c27ba0]/80 uppercase tracking-[0.15em]">Veo 3.1</span>
-          </div>
-
-          <div className="flex sm:block items-center gap-4 sm:gap-0">
-            <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-[#c27ba0]/10 border border-[#c27ba0]/20 flex items-center justify-center mb-0 sm:mb-6 group-hover:bg-[#c27ba0]/15 group-hover:border-[#c27ba0]/35 transition-all duration-400 shrink-0">
-              <Film size={20} className="text-[#c27ba0]/80 group-hover:text-[#c27ba0] transition-colors duration-300" strokeWidth={1.5} />
-            </div>
-
-            <div>
-              <h2 className="font-bold text-white/80 text-base sm:text-lg tracking-tight mb-1 sm:mb-2 group-hover:text-white transition-colors duration-300">
-                Video Stüdyosu
-              </h2>
-              <p className="text-[10px] sm:text-[11px] text-white/30 leading-relaxed group-hover:text-white/45 transition-colors duration-300 line-clamp-2 sm:line-clamp-none">
-                Üretilen görsellerden sinematik moda videosu oluştur.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2 text-[#c27ba0]/40 group-hover:text-[#c27ba0]/80 transition-all duration-300 mt-2 sm:mt-0">
-            <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.2em]">Stüdyoya Gir</span>
-            <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform duration-300" />
-          </div>
-        </motion.button>
       </div>
 
       {/* Bottom version */}

@@ -1,7 +1,7 @@
 @echo off
 setlocal
 echo ============================================================
-echo      COUTUREMASTER ULTRATRANSFER - BRIDAL AI STARTUP
+echo      GELIN DENEME AI - BRIDAL AI STARTUP
 echo ============================================================
 echo.
 

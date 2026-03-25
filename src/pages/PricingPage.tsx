@@ -13,7 +13,7 @@ const PACKAGES = [
     popular: false,
     color: 'from-[#CD7F32] to-[#A0522D]',
     icon: <Star className="text-[#CD7F32]" size={32} />,
-    benefits: ['1000 Üretim Kontörü', '15 Fotoğraf veya 6 Video', 'Standart Öncelikli Render', 'Süresiz Kullanım Hakkı', 'E-posta Desteği']
+    benefits: ['1000 Üretim Kontörü', '15 Profesyonel Fotoğraf', 'Standart Öncelikli Render', 'Süresiz Kullanım Hakkı', 'E-posta Desteği']
   },
   {
     id: 'package_2500',
@@ -23,7 +23,7 @@ const PACKAGES = [
     popular: true,
     color: 'from-[#C0C0C0] to-[#808080]',
     icon: <Award className="text-[#C0C0C0]" size={32} />,
-    benefits: ['2500 Üretim Kontörü', '38 Fotoğraf veya 15 Video', 'Yüksek Öncelikli Render', 'Süresiz Kullanım Hakkı', 'Hızlı Destek Hattı', 'Yeni Modellere Erişim']
+    benefits: ['2500 Üretim Kontörü', '38 Profesyonel Fotoğraf', 'Yüksek Öncelikli Render', 'Süresiz Kullanım Hakkı', 'Hızlı Destek Hattı', 'Yeni Modellere Erişim']
   },
   {
     id: 'package_5000',
@@ -33,7 +33,7 @@ const PACKAGES = [
     popular: false,
     color: 'from-[#D4AF37] to-[#B8860B]',
     icon: <Crown className="text-[#D4AF37]" size={32} />,
-    benefits: ['5000 Üretim Kontörü', '76 Fotoğraf veya 30 Video', 'VIP Öncelikli Render', 'Süresiz Kullanım Hakkı', '7/24 Teknik Destek', 'Yeni Özelliklere Erken Erişim', 'Özel Filigran Kaldırma']
+    benefits: ['5000 Üretim Kontörü', '76 Profesyonel Fotoğraf', 'VIP Öncelikli Render', 'Süresiz Kullanım Hakkı', '7/24 Teknik Destek', 'Yeni Özelliklere Erken Erişim', 'Özel Filigran Kaldırma']
   }
 ];
 
@@ -47,7 +47,7 @@ export const PricingPage: React.FC = () => {
       return;
     }
     
-    const message = `Merhaba, FashionMaster üzerinden ${pkg.name} (${pkg.price}) satın almak istiyorum. %0A%0AKullanıcı: ${user.email}`;
+    const message = `Merhaba, Gelin Deneme üzerinden ${pkg.name} (${pkg.price}) satın almak istiyorum. %0A%0AKullanıcı: ${user.email}`;
     const whatsappUrl = `https://wa.me/905545050967?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
   };
