@@ -1,7 +1,7 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ImageUploader } from "../components/ImageUploader";
-import { AIModelId, ViewMode } from "../services/falApi";
+import { AIModelId, ViewMode, BodyShape, BoneStructure } from "../services/falApi";
 import { Play, ArrowRight, Sparkles } from "lucide-react";
 
 interface ViewPageProps {
@@ -20,7 +20,87 @@ interface ViewPageProps {
   weight: string;
   onHeightChange: (val: string) => void;
   onWeightChange: (val: string) => void;
+  bodyShape: BodyShape | "";
+  boneStructure: BoneStructure | "";
+  onBodyShapeChange: (val: BodyShape | "") => void;
+  onBoneStructureChange: (val: BoneStructure | "") => void;
 }
+
+const BODY_SHAPES: { id: BodyShape; label: string; tr: string; svg: React.ReactNode }[] = [
+  {
+    id: "apple",
+    label: "Apple",
+    tr: "Elma",
+    svg: (
+      <svg viewBox="0 0 40 70" className="w-7 h-12" fill="currentColor">
+        <ellipse cx="20" cy="18" rx="9" ry="10" opacity="0.9"/>
+        <ellipse cx="20" cy="40" rx="13" ry="14" />
+        <rect x="16" y="52" width="4" height="12" rx="2"/>
+        <rect x="22" y="52" width="4" height="12" rx="2"/>
+      </svg>
+    ),
+  },
+  {
+    id: "pear",
+    label: "Pear",
+    tr: "Armut",
+    svg: (
+      <svg viewBox="0 0 40 70" className="w-7 h-12" fill="currentColor">
+        <ellipse cx="20" cy="18" rx="8" ry="9" opacity="0.9"/>
+        <ellipse cx="20" cy="38" rx="8" ry="9" />
+        <ellipse cx="20" cy="53" rx="13" ry="10" />
+        <rect x="16" y="60" width="3.5" height="8" rx="2"/>
+        <rect x="22" y="60" width="3.5" height="8" rx="2"/>
+      </svg>
+    ),
+  },
+  {
+    id: "hourglass",
+    label: "Hourglass",
+    tr: "Kum Saati",
+    svg: (
+      <svg viewBox="0 0 40 70" className="w-7 h-12" fill="currentColor">
+        <ellipse cx="20" cy="17" rx="12" ry="10" opacity="0.9"/>
+        <path d="M8 27 Q20 38 32 27 L32 43 Q20 32 8 43 Z" />
+        <ellipse cx="20" cy="53" rx="12" ry="10" />
+        <rect x="16" y="60" width="3.5" height="8" rx="2"/>
+        <rect x="22" y="60" width="3.5" height="8" rx="2"/>
+      </svg>
+    ),
+  },
+  {
+    id: "rectangle",
+    label: "Rectangle",
+    tr: "Dikdörtgen",
+    svg: (
+      <svg viewBox="0 0 40 70" className="w-7 h-12" fill="currentColor">
+        <ellipse cx="20" cy="17" rx="9" ry="9" opacity="0.9"/>
+        <rect x="11" y="26" width="18" height="30" rx="4" />
+        <rect x="15" y="54" width="4" height="12" rx="2"/>
+        <rect x="22" y="54" width="4" height="12" rx="2"/>
+      </svg>
+    ),
+  },
+  {
+    id: "inverted-triangle",
+    label: "Inverted Triangle",
+    tr: "Ters Üçgen",
+    svg: (
+      <svg viewBox="0 0 40 70" className="w-7 h-12" fill="currentColor">
+        <ellipse cx="20" cy="17" rx="9" ry="9" opacity="0.9"/>
+        <path d="M7 26 L33 26 L26 56 L14 56 Z" />
+        <rect x="15" y="54" width="4" height="12" rx="2"/>
+        <rect x="22" y="54" width="4" height="12" rx="2"/>
+      </svg>
+    ),
+  },
+];
+
+const BONE_STRUCTURES: { id: BoneStructure; label: string }[] = [
+  { id: "small", label: "İnce Kemik" },
+  { id: "medium", label: "Orta Kemik" },
+  { id: "large", label: "İri Kemik" },
+];
 
 export const ViewPage: React.FC<ViewPageProps> = ({
   title,
@@ -38,6 +118,10 @@ export const ViewPage: React.FC<ViewPageProps> = ({
   weight,
   onHeightChange,
   onWeightChange,
+  bodyShape,
+  boneStructure,
+  onBodyShapeChange,
+  onBoneStructureChange,
 }) => {
   return (
     <div className="max-w-6xl mx-auto w-full">
@@ -50,8 +134,8 @@ export const ViewPage: React.FC<ViewPageProps> = ({
             {subtitle} Modu Aktif
           </p>
         </div>
-        
-        <button 
+
+        <button
           onClick={onGenerate}
           disabled={isLoading || !canGenerate}
           className={`w-full sm:w-auto bg-[#D4AF37] hover:bg-[#A67C00] text-black px-6 sm:px-10 py-3 sm:py-4 rounded-full flex items-center justify-center space-x-3 transition-all transform hover:scale-105 shadow-xl shadow-[#D4AF37]/20 font-bold group disabled:opacity-20 disabled:grayscale disabled:cursor-not-allowed shrink-0`}
@@ -84,12 +168,13 @@ export const ViewPage: React.FC<ViewPageProps> = ({
             <span className="text-[#D4AF37]/60 italic font-normal">Kullanıcı</span>
           </label>
           <ImageUploader label="Müşteri Görseli" onUpload={onModelUrlChange} isLoading={isLoading} />
-          
+
+          {/* Boy & Kilo */}
           <div className="grid grid-cols-2 gap-3 mt-4">
             <div className="space-y-1.5">
               <label className="text-[9px] uppercase tracking-widest text-gray-500 font-bold ml-1">Boy (cm)</label>
-              <input 
-                type="number" 
+              <input
+                type="number"
                 placeholder="175"
                 value={height}
                 onChange={(e) => onHeightChange(e.target.value)}
@@ -98,13 +183,56 @@ export const ViewPage: React.FC<ViewPageProps> = ({
             </div>
             <div className="space-y-1.5">
               <label className="text-[9px] uppercase tracking-widest text-gray-500 font-bold ml-1">Kilo (kg)</label>
-              <input 
-                type="number" 
+              <input
+                type="number"
                 placeholder="65"
                 value={weight}
                 onChange={(e) => onWeightChange(e.target.value)}
                 className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:border-[#D4AF37]/50 outline-none transition-all"
               />
+            </div>
+          </div>
+
+          {/* Vücut Şekli */}
+          <div className="mt-4 space-y-2">
+            <label className="text-[9px] uppercase tracking-widest text-gray-500 font-bold ml-1">Vücut Şekli</label>
+            <div className="grid grid-cols-5 gap-1.5">
+              {BODY_SHAPES.map((shape) => (
+                <button
+                  key={shape.id}
+                  type="button"
+                  onClick={() => onBodyShapeChange(bodyShape === shape.id ? "" : shape.id)}
+                  className={`flex flex-col items-center gap-1 py-2.5 px-1 rounded-xl border transition-all ${
+                    bodyShape === shape.id
+                      ? "border-[#D4AF37] bg-[#D4AF37]/10 text-[#D4AF37]"
+                      : "border-white/10 bg-black/30 text-gray-500 hover:border-white/20 hover:text-gray-300"
+                  }`}
+                >
+                  {shape.svg}
+                  <span className="text-[8px] font-bold uppercase tracking-wide leading-tight text-center">{shape.tr}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Kemik Yapısı */}
+          <div className="mt-3 space-y-2">
+            <label className="text-[9px] uppercase tracking-widest text-gray-500 font-bold ml-1">Kemik Yapısı</label>
+            <div className="grid grid-cols-3 gap-2">
+              {BONE_STRUCTURES.map((bone) => (
+                <button
+                  key={bone.id}
+                  type="button"
+                  onClick={() => onBoneStructureChange(boneStructure === bone.id ? "" : bone.id)}
+                  className={`py-2 rounded-xl border text-[9px] font-bold uppercase tracking-widest transition-all ${
+                    boneStructure === bone.id
+                      ? "border-[#D4AF37] bg-[#D4AF37]/10 text-[#D4AF37]"
+                      : "border-white/10 bg-black/30 text-gray-500 hover:border-white/20 hover:text-gray-300"
+                  }`}
+                >
+                  {bone.label}
+                </button>
+              ))}
             </div>
           </div>
         </div>

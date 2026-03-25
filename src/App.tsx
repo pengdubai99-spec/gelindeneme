@@ -8,7 +8,7 @@ import { ViewPage } from "./pages/ViewPage";
 import { ResultGallery } from "./components/ResultGallery";
 import { LandingPage } from "./pages/LandingPage";
 import { fal, initFal } from "./services/falClient";
-import { generateBridalImage, AIModelId, ViewMode } from "./services/falApi";
+import { generateBridalImage, AIModelId, ViewMode, BodyShape, BoneStructure } from "./services/falApi";
 import { useAuth } from "./context/AuthContext";
 import { PricingModal } from "./components/PricingModal";
 import { AuthModal } from "./components/AuthModal";
@@ -162,6 +162,8 @@ const App: React.FC = () => {
   const [locationUrl, setLocationUrl] = useState<string>("");
   const [customerHeight, setCustomerHeight] = useState<string>("");
   const [customerWeight, setCustomerWeight] = useState<string>("");
+  const [customerBodyShape, setCustomerBodyShape] = useState<BodyShape | "">("");
+  const [customerBoneStructure, setCustomerBoneStructure] = useState<BoneStructure | "">("");
   const [engine, setEngine] = useState<AIModelId>("fal-ai/nano-banana-pro/edit");
   const [results, setResults] = useState<GenerationResult[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -302,6 +304,8 @@ const App: React.FC = () => {
         locationImageUrl: (viewMode === "location" || viewMode === "location-closeup") ? locationUrl : undefined,
         height: customerHeight,
         weight: customerWeight,
+        bodyShape: customerBodyShape,
+        boneStructure: customerBoneStructure,
       }, (update) => {
         if (update.status === "IN_PROGRESS") {
           const lastLog = update.logs?.[update.logs.length - 1]?.message || "Sanal Couture İşleniyor...";
@@ -504,6 +508,10 @@ const App: React.FC = () => {
                   weight={customerWeight}
                   onHeightChange={setCustomerHeight}
                   onWeightChange={setCustomerWeight}
+                  bodyShape={customerBodyShape}
+                  boneStructure={customerBoneStructure}
+                  onBodyShapeChange={setCustomerBodyShape}
+                  onBoneStructureChange={setCustomerBoneStructure}
                 />
               }
             />
@@ -525,6 +533,10 @@ const App: React.FC = () => {
                   weight={customerWeight}
                   onHeightChange={setCustomerHeight}
                   onWeightChange={setCustomerWeight}
+                  bodyShape={customerBodyShape}
+                  boneStructure={customerBoneStructure}
+                  onBodyShapeChange={setCustomerBodyShape}
+                  onBoneStructureChange={setCustomerBoneStructure}
                 />
               }
             />
@@ -546,6 +558,10 @@ const App: React.FC = () => {
                   weight={customerWeight}
                   onHeightChange={setCustomerHeight}
                   onWeightChange={setCustomerWeight}
+                  bodyShape={customerBodyShape}
+                  boneStructure={customerBoneStructure}
+                  onBodyShapeChange={setCustomerBodyShape}
+                  onBoneStructureChange={setCustomerBoneStructure}
                 />
               }
             />
@@ -568,6 +584,10 @@ const App: React.FC = () => {
                   weight={customerWeight}
                   onHeightChange={setCustomerHeight}
                   onWeightChange={setCustomerWeight}
+                  bodyShape={customerBodyShape}
+                  boneStructure={customerBoneStructure}
+                  onBodyShapeChange={setCustomerBodyShape}
+                  onBoneStructureChange={setCustomerBoneStructure}
                 />
               }
             />
@@ -590,6 +610,10 @@ const App: React.FC = () => {
                   weight={customerWeight}
                   onHeightChange={setCustomerHeight}
                   onWeightChange={setCustomerWeight}
+                  bodyShape={customerBodyShape}
+                  boneStructure={customerBoneStructure}
+                  onBodyShapeChange={setCustomerBodyShape}
+                  onBoneStructureChange={setCustomerBoneStructure}
                 />
               }
             />

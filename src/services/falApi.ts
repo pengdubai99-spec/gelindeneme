@@ -3,6 +3,8 @@ import { FRONT_VIEW_PROMPT, BACK_VIEW_PROMPT, CLOSEUP_VIEW_PROMPT, LOCATION_VIEW
 
 export type AIModelId = "fal-ai/fashn/tryon/v1.5" | "fal-ai/idm-vton" | "fal-ai/nano-banana-pro/edit";
 export type ViewMode = "front" | "back" | "closeup" | "location" | "location-closeup";
+export type BodyShape = "apple" | "pear" | "hourglass" | "rectangle" | "inverted-triangle";
+export type BoneStructure = "small" | "medium" | "large";
 
 export interface GenerationParams {
   modelId: AIModelId;
@@ -15,6 +17,8 @@ export interface GenerationParams {
   locationImageUrl?: string;
   height?: string;
   weight?: string;
+  bodyShape?: BodyShape | "";
+  boneStructure?: BoneStructure | "";
 }
 
 const getPromptForView = (viewMode: ViewMode): string => {
@@ -49,57 +53,81 @@ const getDescriptionForView = (viewMode: ViewMode): string => {
   }
 };
 
-const buildBodyContext = (height?: string, weight?: string): string => {
-  if (!height && !weight) return "";
+const BODY_SHAPE_DESCRIPTIONS: Record<BodyShape, { name: string; detail: string }> = {
+  apple: {
+    name: "apple body shape",
+    detail: "weight concentrated in the midsection and belly area, wider waist, rounder abdomen, slimmer legs and hips relative to the midsection. The dress must accommodate a prominent belly and wider waist — fabric should drape over the rounded midsection naturally without pulling.",
+  },
+  pear: {
+    name: "pear body shape",
+    detail: "narrower shoulders and bust, significantly wider hips and thighs, fuller lower body. The skirt must accommodate wider hips and thighs while the bodice fits a narrower upper body.",
+  },
+  hourglass: {
+    name: "hourglass body shape",
+    detail: "balanced bust and hips with a distinctly narrow waist, pronounced curves both above and below the waist. The corset naturally cinches the narrow waist, skirt flows over full hips.",
+  },
+  rectangle: {
+    name: "rectangle body shape",
+    detail: "similar width at shoulders, waist, and hips with minimal curves. Straight silhouette without pronounced waist definition. The dress drapes more uniformly without strong waist cinching.",
+  },
+  "inverted-triangle": {
+    name: "inverted triangle body shape",
+    detail: "broad shoulders and wide upper body, narrower hips and waist. The upper bodice must accommodate broader shoulders while the skirt fits slimmer hips.",
+  },
+};
+
+const BONE_STRUCTURE_DESCRIPTIONS: Record<BoneStructure, string> = {
+  small: "small delicate bone frame — narrower joints, slender wrists and ankles, lighter skeletal build",
+  medium: "medium bone frame — average joint width, proportionate skeletal build",
+  large: "large heavy bone frame — wide joints, broad wrists and shoulders, heavier skeletal structure that creates a naturally bigger appearance even at lower weight",
+};
+
+const buildBodyContext = (height?: string, weight?: string, bodyShape?: BodyShape | "", boneStructure?: BoneStructure | ""): string => {
+  const hasData = height || weight || bodyShape || boneStructure;
+  if (!hasData) return "";
 
   const h = parseFloat(height || "0");
   const w = parseFloat(weight || "0");
 
-  let description = "\n\n------------------------------------------------\nCUSTOMER BODY MEASUREMENTS\n------------------------------------------------\n";
+  let description = "\n\n------------------------------------------------\nCUSTOMER BODY PROFILE — CRITICAL ACCURACY REQUIRED\n------------------------------------------------\n";
 
   if (h > 0) {
-    const heightCategory = h < 158 ? "petite short stature" : h < 168 ? "average height" : h < 178 ? "tall" : "very tall";
+    const heightCategory = h < 158 ? "petite/short stature" : h < 168 ? "average height" : h < 178 ? "tall" : "very tall";
     description += `Height: ${h}cm (${heightCategory})\n`;
   }
 
   if (w > 0 && h > 0) {
     const bmi = w / ((h / 100) ** 2);
-    let bodyType: string;
-    let silhouetteNote: string;
-    if (bmi < 18.5) {
-      bodyType = "slim, slender figure";
-      silhouetteNote = "narrow waist and slim hips, lean proportions";
-    } else if (bmi < 22) {
-      bodyType = "slim to average figure";
-      silhouetteNote = "balanced waist-to-hip ratio, natural proportions";
-    } else if (bmi < 25) {
-      bodyType = "average figure";
-      silhouetteNote = "moderate curves, natural feminine proportions";
-    } else if (bmi < 28) {
-      bodyType = "slightly curvy figure";
-      silhouetteNote = "fuller hips, defined waist with soft curves";
-    } else if (bmi < 32) {
-      bodyType = "curvy full figure";
-      silhouetteNote = "generous curves, fuller bust and hips, corset should accommodate fuller torso";
-    } else {
-      bodyType = "plus-size full figure";
-      silhouetteNote = "full curvy proportions, the dress draping must reflect fuller body volume";
-    }
-    description += `Weight: ${w}kg | BMI: ${bmi.toFixed(1)} | Body type: ${bodyType}\n`;
-    description += `Silhouette note: ${silhouetteNote}\n`;
+    let sizeClass: string;
+    if (bmi < 18.5) sizeClass = "underweight/slim";
+    else if (bmi < 22) sizeClass = "slim to average";
+    else if (bmi < 25) sizeClass = "average weight";
+    else if (bmi < 28) sizeClass = "slightly overweight";
+    else if (bmi < 32) sizeClass = "overweight";
+    else sizeClass = "significantly overweight/plus-size";
+    description += `Weight: ${w}kg | BMI: ${bmi.toFixed(1)} (${sizeClass})\n`;
   } else if (w > 0) {
     description += `Weight: ${w}kg\n`;
   }
 
-  description += `\nCRITICAL: The model's body proportions in the generated image MUST accurately reflect the above measurements. The dress must fit and drape according to these real body proportions. Do NOT use a generic model body — adapt to the specified measurements.\n------------------------------------------------`;
+  if (bodyShape && BODY_SHAPE_DESCRIPTIONS[bodyShape]) {
+    const s = BODY_SHAPE_DESCRIPTIONS[bodyShape];
+    description += `\nBody shape: ${s.name}\nShape detail: ${s.detail}\n`;
+  }
+
+  if (boneStructure && BONE_STRUCTURE_DESCRIPTIONS[boneStructure]) {
+    description += `\nBone structure: ${BONE_STRUCTURE_DESCRIPTIONS[boneStructure]}\n`;
+  }
+
+  description += `\nCRITICAL INSTRUCTION: The model body in the generated image MUST accurately reflect ALL of the above measurements and characteristics. Do NOT substitute a generic slim fashion model body. The dress fit, drape, fabric tension, and silhouette must physically match this customer's real body profile. Every body detail above is mandatory.\n------------------------------------------------`;
 
   return description;
 };
 
 export const generateBridalImage = async (params: GenerationParams, onUpdate?: (update: any) => void) => {
-  const { modelId, garmentImageUrl, modelImageUrl, seed, quality = "balanced", numSamples = 1, viewMode = "front", locationImageUrl, height, weight } = params;
+  const { modelId, garmentImageUrl, modelImageUrl, seed, quality = "balanced", numSamples = 1, viewMode = "front", locationImageUrl, height, weight, bodyShape, boneStructure } = params;
 
-  const bodyContext = buildBodyContext(height, weight);
+  const bodyContext = buildBodyContext(height, weight, bodyShape, boneStructure);
 
   if (modelId === "fal-ai/fashn/tryon/v1.5") {
     return await fal.subscribe("fal-ai/fashn/tryon/v1.5", {
