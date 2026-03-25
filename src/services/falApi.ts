@@ -13,6 +13,8 @@ export interface GenerationParams {
   numSamples?: number;
   viewMode?: ViewMode;
   locationImageUrl?: string;
+  height?: string;
+  weight?: string;
 }
 
 const getPromptForView = (viewMode: ViewMode): string => {
@@ -47,8 +49,57 @@ const getDescriptionForView = (viewMode: ViewMode): string => {
   }
 };
 
+const buildBodyContext = (height?: string, weight?: string): string => {
+  if (!height && !weight) return "";
+
+  const h = parseFloat(height || "0");
+  const w = parseFloat(weight || "0");
+
+  let description = "\n\n------------------------------------------------\nCUSTOMER BODY MEASUREMENTS\n------------------------------------------------\n";
+
+  if (h > 0) {
+    const heightCategory = h < 158 ? "petite short stature" : h < 168 ? "average height" : h < 178 ? "tall" : "very tall";
+    description += `Height: ${h}cm (${heightCategory})\n`;
+  }
+
+  if (w > 0 && h > 0) {
+    const bmi = w / ((h / 100) ** 2);
+    let bodyType: string;
+    let silhouetteNote: string;
+    if (bmi < 18.5) {
+      bodyType = "slim, slender figure";
+      silhouetteNote = "narrow waist and slim hips, lean proportions";
+    } else if (bmi < 22) {
+      bodyType = "slim to average figure";
+      silhouetteNote = "balanced waist-to-hip ratio, natural proportions";
+    } else if (bmi < 25) {
+      bodyType = "average figure";
+      silhouetteNote = "moderate curves, natural feminine proportions";
+    } else if (bmi < 28) {
+      bodyType = "slightly curvy figure";
+      silhouetteNote = "fuller hips, defined waist with soft curves";
+    } else if (bmi < 32) {
+      bodyType = "curvy full figure";
+      silhouetteNote = "generous curves, fuller bust and hips, corset should accommodate fuller torso";
+    } else {
+      bodyType = "plus-size full figure";
+      silhouetteNote = "full curvy proportions, the dress draping must reflect fuller body volume";
+    }
+    description += `Weight: ${w}kg | BMI: ${bmi.toFixed(1)} | Body type: ${bodyType}\n`;
+    description += `Silhouette note: ${silhouetteNote}\n`;
+  } else if (w > 0) {
+    description += `Weight: ${w}kg\n`;
+  }
+
+  description += `\nCRITICAL: The model's body proportions in the generated image MUST accurately reflect the above measurements. The dress must fit and drape according to these real body proportions. Do NOT use a generic model body — adapt to the specified measurements.\n------------------------------------------------`;
+
+  return description;
+};
+
 export const generateBridalImage = async (params: GenerationParams, onUpdate?: (update: any) => void) => {
-  const { modelId, garmentImageUrl, modelImageUrl, seed, quality = "balanced", numSamples = 1, viewMode = "front", locationImageUrl } = params;
+  const { modelId, garmentImageUrl, modelImageUrl, seed, quality = "balanced", numSamples = 1, viewMode = "front", locationImageUrl, height, weight } = params;
+
+  const bodyContext = buildBodyContext(height, weight);
 
   if (modelId === "fal-ai/fashn/tryon/v1.5") {
     return await fal.subscribe("fal-ai/fashn/tryon/v1.5", {
@@ -72,7 +123,7 @@ export const generateBridalImage = async (params: GenerationParams, onUpdate?: (
       input: {
         human_image_url: modelImageUrl,
         garment_image_url: garmentImageUrl,
-        description: getDescriptionForView(viewMode),
+        description: getDescriptionForView(viewMode) + bodyContext,
         num_inference_steps: 50,
         seed: seed
       },
@@ -89,7 +140,7 @@ export const generateBridalImage = async (params: GenerationParams, onUpdate?: (
 
   return await fal.subscribe("fal-ai/nano-banana-pro/edit", {
     input: {
-      prompt: getPromptForView(viewMode),
+      prompt: getPromptForView(viewMode) + bodyContext,
       image_urls: imageUrls,
       num_images: numSamples,
       resolution: "2K",

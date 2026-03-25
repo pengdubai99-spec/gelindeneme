@@ -16,6 +16,10 @@ interface ViewPageProps {
   onGenerate: () => void;
   canGenerate: boolean;
   progressMsg: string;
+  height: string;
+  weight: string;
+  onHeightChange: (val: string) => void;
+  onWeightChange: (val: string) => void;
 }
 
 export const ViewPage: React.FC<ViewPageProps> = ({
@@ -30,6 +34,10 @@ export const ViewPage: React.FC<ViewPageProps> = ({
   onGenerate,
   canGenerate,
   progressMsg,
+  height,
+  weight,
+  onHeightChange,
+  onWeightChange,
 }) => {
   return (
     <div className="max-w-6xl mx-auto w-full">
@@ -69,13 +77,36 @@ export const ViewPage: React.FC<ViewPageProps> = ({
           <ImageUploader label="Giysi Referansı" onUpload={onDressUrlChange} isLoading={isLoading} />
         </div>
 
-        {/* Slot 2: Manken Girişi */}
+        {/* Slot 2: Müşteri Girişi */}
         <div className="flex flex-col">
           <label className="text-[9px] sm:text-[11px] uppercase tracking-widest text-gray-400 mb-2 sm:mb-4 font-semibold flex justify-between px-1">
-            <span>Manken Girişi</span>
-            <span className="text-[#D4AF37]/60 italic font-normal">Model</span>
+            <span>Müşteri Girişi</span>
+            <span className="text-[#D4AF37]/60 italic font-normal">Kullanıcı</span>
           </label>
-          <ImageUploader label="Model Konsepti" onUpload={onModelUrlChange} isLoading={isLoading} />
+          <ImageUploader label="Müşteri Görseli" onUpload={onModelUrlChange} isLoading={isLoading} />
+          
+          <div className="grid grid-cols-2 gap-3 mt-4">
+            <div className="space-y-1.5">
+              <label className="text-[9px] uppercase tracking-widest text-gray-500 font-bold ml-1">Boy (cm)</label>
+              <input 
+                type="number" 
+                placeholder="175"
+                value={height}
+                onChange={(e) => onHeightChange(e.target.value)}
+                className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:border-[#D4AF37]/50 outline-none transition-all"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-[9px] uppercase tracking-widest text-gray-500 font-bold ml-1">Kilo (kg)</label>
+              <input 
+                type="number" 
+                placeholder="65"
+                value={weight}
+                onChange={(e) => onWeightChange(e.target.value)}
+                className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:border-[#D4AF37]/50 outline-none transition-all"
+              />
+            </div>
+          </div>
         </div>
 
         {/* Slot 3: Mekan Girişi (Optional) */}
@@ -104,7 +135,7 @@ export const ViewPage: React.FC<ViewPageProps> = ({
           {isLoading ? (
             <div className="text-white/80 animate-pulse">{progressMsg}</div>
           ) : (
-            <div className="truncate">FM_{new Date().getTime().toString().slice(-8)}_SESSION_WAITING...</div>
+            <div className="truncate">GD_{new Date().getTime().toString().slice(-8)}_SESSION_WAITING...</div>
           )}
         </div>
       </div>

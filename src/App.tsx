@@ -160,6 +160,8 @@ const App: React.FC = () => {
   const [dressUrl, setDressUrl] = useState<string>("");
   const [modelUrl, setModelUrl] = useState<string>("");
   const [locationUrl, setLocationUrl] = useState<string>("");
+  const [customerHeight, setCustomerHeight] = useState<string>("");
+  const [customerWeight, setCustomerWeight] = useState<string>("");
   const [engine, setEngine] = useState<AIModelId>("fal-ai/nano-banana-pro/edit");
   const [results, setResults] = useState<GenerationResult[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -298,6 +300,8 @@ const App: React.FC = () => {
         quality: quality,
         viewMode: viewMode,
         locationImageUrl: (viewMode === "location" || viewMode === "location-closeup") ? locationUrl : undefined,
+        height: customerHeight,
+        weight: customerWeight,
       }, (update) => {
         if (update.status === "IN_PROGRESS") {
           const lastLog = update.logs?.[update.logs.length - 1]?.message || "Sanal Couture İşleniyor...";
@@ -496,6 +500,10 @@ const App: React.FC = () => {
                   onGenerate={handleGenerate}
                   canGenerate={!!dressUrl && !!modelUrl}
                   progressMsg={progressMsg}
+                  height={customerHeight}
+                  weight={customerWeight}
+                  onHeightChange={setCustomerHeight}
+                  onWeightChange={setCustomerWeight}
                 />
               }
             />
@@ -513,6 +521,10 @@ const App: React.FC = () => {
                   onGenerate={handleGenerate}
                   canGenerate={!!dressUrl && !!modelUrl}
                   progressMsg={progressMsg}
+                  height={customerHeight}
+                  weight={customerWeight}
+                  onHeightChange={setCustomerHeight}
+                  onWeightChange={setCustomerWeight}
                 />
               }
             />
@@ -530,6 +542,10 @@ const App: React.FC = () => {
                   onGenerate={handleGenerate}
                   canGenerate={!!dressUrl && !!modelUrl}
                   progressMsg={progressMsg}
+                  height={customerHeight}
+                  weight={customerWeight}
+                  onHeightChange={setCustomerHeight}
+                  onWeightChange={setCustomerWeight}
                 />
               }
             />
@@ -548,6 +564,10 @@ const App: React.FC = () => {
                   onGenerate={handleGenerate}
                   canGenerate={!!dressUrl && !!modelUrl && !!locationUrl}
                   progressMsg={progressMsg}
+                  height={customerHeight}
+                  weight={customerWeight}
+                  onHeightChange={setCustomerHeight}
+                  onWeightChange={setCustomerWeight}
                 />
               }
             />
@@ -566,6 +586,10 @@ const App: React.FC = () => {
                   onGenerate={handleGenerate}
                   canGenerate={!!dressUrl && !!modelUrl && !!locationUrl}
                   progressMsg={progressMsg}
+                  height={customerHeight}
+                  weight={customerWeight}
+                  onHeightChange={setCustomerHeight}
+                  onWeightChange={setCustomerWeight}
                 />
               }
             />
